@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>针行千年</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#001524',
+            secondary: '#15616d',
+            accent: '#ff7d00',
+            neutral: '#ffecd1',
+            dark: '#78290f',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Noto Serif SC', 'serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .transition-transform-opacity {
+        transition-property: transform, opacity;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .backdrop-blur {
+        backdrop-filter: blur(8px);
+      }
+    }
+  </style>
+</head>
+<body class="bg-primary text-neutral min-h-screen overflow-x-hidden">
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+    <nav class="bg-primary/80 backdrop-blur border-b border-secondary/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+			 <a href="#home" class="flex-shrink-0 flex items-center">
+  				<img src="首页/针灸图标.png" alt="针灸图标" class="w-8 h-8 object-contain mr-2">
+				 <span class="font-serif text-xl font-bold tracking-tight">针行千年</span></a>
+            <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <a href="#home" class="border-b-2 border-accent inline-flex items-center px-1 pt-1 text-sm font-medium">首页</a>
+              <a href="#needle-way" class="border-transparent hover:border-accent border-b-2 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">针道·理论</a>
+              <a href="#needle-technique" class="border-transparent hover:border-accent border-b-2 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">针术·实践</a>
+              <a href="#needle-talk" class="border-transparent hover:border-accent border-b-2 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">针语·人文</a>
+              <a href="#animal-acupuncture" class="border-transparent hover:border-accent border-b-2 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">动物针灸</a>
+              <a href="#taboo" class="border-transparent hover:border-accent border-b-2 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">针灸禁忌</a>
+              <a href="#world-acupuncture" class="border-transparent hover:border-accent border-b-2 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">世界针灸</a>
+            </div>
+          </div>
+          <div class="flex items-center">
+          
+            <div class="ml-4 flex items-center sm:ml-6">
+              <button id="menu-toggle" class="p-2 rounded-md text-neutral hover:text-accent focus:outline-none sm:hidden transition-colors duration-200">
+                <i class="fa fa-bars"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 移动端菜单 -->
+      <div id="mobile-menu" class="sm:hidden hidden bg-primary/95 backdrop-blur border-t border-secondary/30">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium bg-accent/20 text-accent">首页</a>
+          <a href="#needle-way" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary/20 hover:text-accent transition-colors duration-200">针道</a>
+          <a href="#needle-technique" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary/20 hover:text-accent transition-colors duration-200">针术</a>
+          <a href="#needle-talk" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary/20 hover:text-accent transition-colors duration-200">针语</a>
+          <a href="#animal-acupuncture" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary/20 hover:text-accent transition-colors duration-200">动物针灸</a>
+          <a href="#taboo" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary/20 hover:text-accent transition-colors duration-200">针灸禁忌</a>
+          <a href="#world-acupuncture" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary/20 hover:text-accent transition-colors duration-200">世界针灸</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+
+  <script>
+    // 获取元素
+    const searchContainer = document.getElementById('search-container');
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const closeSearch = document.getElementById('close-search');
+
+    // 搜索功能实现
+    function performSearch() {
+      const searchTerm = searchInput.value.trim();
+      if (searchTerm) {
+        // 构造百度搜索URL
+        const searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(searchTerm)}`;
+        // 跳转到百度搜索结果页面
+        window.open(searchUrl, '_blank');
+        // 清空输入框
+        searchInput.value = '';
+      }
+    }
+
+    // 点击搜索按钮触发搜索
+    searchButton.addEventListener('click', performSearch);
+
+    // 按回车键触发搜索
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // 关闭搜索框
+    closeSearch.addEventListener('click', function() {
+      searchContainer.classList.add('hidden');
+      searchInput.value = '';
+    });
+
+    // 这里可以添加打开搜索框的代码，例如点击页面上的搜索图标
+    // document.getElementById('open-search').addEventListener('click', function() {
+    //   searchContainer.classList.remove('hidden');
+    //   searchInput.focus();
+    // });
+  </script>
+  <main>
+    <!-- 首页 -->
+    <section id="home" class="min-h-screen pt-16 flex flex-col">
+      <div class="relative flex-grow flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+          <div class="absolute inset-0 bg-primary/50 z-10"></div>
+          <img src="首页/头图4.jpg" alt="针灸场景" class="w-full h-full object-cover">
+        </div>
+    
+        <div class="container mx-auto px-6 py-12 relative z-20 text-center">
+          <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-serif font-bold text-neutral mb-6 text-shadow animate-fadeIn">
+            <span class="text-accent">针</span>行千年
+	
+			</h1>
+          <p class="text-[clamp(1.25rem,3vw,1.75rem)] max-w-3xl mx-auto mb-8 text-neutral/90">
+  用 <span class="text-[#ff7d00] font-bold">1091</span> 条数据为你讲述藏在针灸里的中国智慧
+</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-14">
+            <a href="#acupuncture-intro" class="bg-accent hover:bg-accent/90 text-primary font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-accent/20">
+              了解针灸
+            </a>
+            <a href="#history" class="bg-transparent hover:bg-secondary/30 border-2 border-neutral/30 hover:border-neutral text-neutral font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+              发展历程
+            </a>
+          </div>
+        </div>
+        <div class="absolute bottom-10 left-0 right-0 text-center z-20">
+          <a href="#acupuncture-intro" class="text-neutral animate-bounce inline-block">
+            <i class="fa fa-angle-down text-4xl"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- 针灸介绍 -->
+      <div id="acupuncture-intro" class="py-20 bg-gradient-to-b from-primary to-secondary/30">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+              针灸是什么
+              <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+            </h2>
+            <p class="text-neutral/80 max-w-3xl mx-auto mt-6 text-justify">
+              针灸是针法和灸法的总称，是东方医学的重要组成部分之一，在形成、应用和发展的过程中，具有鲜明的中华民族文化与地域特征，是基于中华民族文化和科学传统产生的宝贵遗产。
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+              <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 transform hover:translate-y-[-5px] transition-all duration-300">
+                <h3 class="text-xl font-serif font-bold text-accent mb-3 flex items-center">
+                  <i class="fa fa-lightbulb-o mr-3"></i>基本原理
+                </h3>
+                <p class="text-neutral/80">
+                  针灸基于中医的经络理论，认为人体有十二条主要经络和奇经八脉，它们连接全身的脏腑和组织。通过针刺或艾灸特定穴位，可以调节气血运行，平衡阴阳，恢复身体的自然疗愈能力。
+                </p>
+              </div>
+              <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 transform hover:translate-y-[-5px] transition-all duration-300">
+                <h3 class="text-xl font-serif font-bold text-accent mb-3 flex items-center">
+                  <i class="fa fa-stethoscope mr-3"></i>治疗范围
+                </h3>
+                <p class="text-neutral/80">
+                  针灸可以治疗多种疾病和症状，包括疼痛管理（如头痛、背痛）、消化系统疾病、呼吸系统疾病、神经系统疾病、妇科问题以及压力和焦虑等身心疾病。
+                </p>
+              </div>
+              <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 transform hover:translate-y-[-5px] transition-all duration-300">
+                <h3 class="text-xl font-serif font-bold text-accent mb-3 flex items-center">
+                  <i class="fa fa-medkit mr-3"></i>现代应用
+                </h3>
+                <p class="text-neutral/80">
+                  现代医学中，针灸已被广泛研究并应用于辅助治疗，尤其在慢性疼痛、术后恢复和癌症支持治疗等领域。许多西方国家也逐渐认可针灸的疗效，并将其纳入医保体系。
+                </p>
+              </div>
+            </div>
+            <div class="relative">
+              <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
+                <img src="首页/是什么配图2.jpg" alt="针灸治疗" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-6 -left-6 bg-accent/90 text-primary p-4 rounded-lg shadow-lg hidden md:block">
+                <p class="font-bold">中国具有世界影响的文化标志之一</p>
+              </div>
+              <div class="absolute -top-6 -right-6 bg-secondary/90 text-neutral p-4 rounded-lg shadow-lg hidden md:block">
+                <p class="font-bold">第一批国家级非物质文化遗产</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 针灸历史 -->
+      <div id="history" class="py-20 bg-gradient-to-b from-secondary/30 to-primary">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+              针灸发展历程
+              <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+            </h2>
+            <p class="text-neutral/80 max-w-3xl mx-auto mt-6">
+              针灸的历史可以追溯到数千年前，经历了多个发展阶段，成为今天备受关注的传统医学疗法。
+            </p>
+          </div>
+
+          <div class="relative">
+            <!-- 时间线 -->
+            <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-accent/50"></div>
+
+            <!-- 时间点1 -->
+            <div class="relative mb-16">
+              <div class="md:flex md:justify-between items-center">
+                <div class="md:w-5/12 md:pr-1 md:text-right order-2 md:order-1 mt-6 md:mt-0">
+                  <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 shadow-lg">
+                    <h3 class="text-xl font-serif font-bold text-accent mb-3">旧石器时期（约10,000年前）</h3>
+                    <p class="text-neutral/80">
+                      最早的针灸工具是用石头制成的"砭石"，用于刺破脓肿或刺压身体特定部位。这一时期的针灸主要用于外科治疗。
+                    </p>
+                  </div>
+                </div>
+                <div class="md:w-2/12 flex justify-center order-1 md:order-2">
+                  <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center shadow-lg relative z-10">
+                    <i class="fa fa-stone text-primary text-xl"></i>
+                  </div>
+                </div>
+                <div class="md:w-5/12 md:pl-1 order-3 hidden md:block"></div>
+              </div>
+            </div>
+
+            <!-- 时间点2 -->
+            <div class="relative mb-16">
+              <div class="md:flex md:justify-between items-center">
+                <div class="md:w-5/12 md:pr-1 order-1 hidden md:block"></div>
+                <div class="md:w-2/12 flex justify-center order-2">
+                  <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center shadow-lg relative z-10">
+                  </div>
+                </div>
+                <div class="md:w-5/12 md:pl-1 order-3 mt-6 md:mt-0">
+                  <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 shadow-lg">
+                    <h3 class="text-xl font-serif font-bold text-accent mb-3">战国至秦汉时期（约2,500年前）</h3>
+                    <p class="text-neutral/80">
+                      随着冶金术的发展，陆续出现了铜针、铁针、银针等针刺工具。《黄帝内经》的出现标志着针灸理论体系的初步形成，奠定了中医基础理论。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 时间点3 -->
+            <div class="relative mb-16">
+              <div class="md:flex md:justify-between items-center">
+                <div class="md:w-5/12 md:pr-1 md:text-right order-2 md:order-1 mt-6 md:mt-0">
+                  <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 shadow-lg">
+                    <h3 class="text-xl font-serif font-bold text-accent mb-3">晋唐时期（约1,700年前）</h3>
+                    <p class="text-neutral/80">
+                      皇甫谧的《针灸甲乙经》是现存古代第一部系统的针灸学专著，系统整理了349个穴名，共649个穴位。唐代设立太医署，针灸成为独立学科，并有了专门的针灸科医生。
+                    </p>
+                  </div>
+                </div>
+                <div class="md:w-2/12 flex justify-center order-1 md:order-2">
+                  <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center shadow-lg relative z-10">
+                  </div>
+                </div>
+                <div class="md:w-5/12 md:pl-1 order-3 hidden md:block"></div>
+              </div>
+            </div>
+
+            <!-- 时间点4 -->
+            <div class="relative mb-16">
+              <div class="md:flex md:justify-between items-center">
+                <div class="md:w-5/12 md:pr-1 order-1 hidden md:block"></div>
+                <div class="md:w-2/12 flex justify-center order-2">
+                  <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center shadow-lg relative z-10">
+                  </div>
+                </div>
+                <div class="md:w-5/12 md:pl-1 order-3 mt-6 md:mt-0">
+                  <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 shadow-lg">
+                    <h3 class="text-xl font-serif font-bold text-accent mb-3">明清时期（约600-300年前）</h3>
+                    <p class="text-neutral/80">
+                      针灸学在明清时期达到鼎盛，出现了《针灸大成》等重要著作。这一时期，针灸真正走进了欧洲世界。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 时间点5 -->
+            <div class="relative">
+              <div class="md:flex md:justify-between items-center">
+                <div class="md:w-5/12 md:pr-1 md:text-right order-2 md:order-1 mt-6 md:mt-0">
+                  <div class="bg-neutral/5 p-6 rounded-xl border border-secondary/30 shadow-lg">
+                    <h3 class="text-xl font-serif font-bold text-accent mb-3">现代（20世纪至今）</h3>
+                    <p class="text-neutral/80">
+                      现代科学研究为针灸提供了理论支持，电针、激光针灸等新技术不断涌现。1991年，世界卫生组织总部出版发行了《国际针灸命名推荐标准》，针灸在全球范围内得到更广泛的应用和研究。
+                    </p>
+                  </div>
+                </div>
+                <div class="md:w-2/12 flex justify-center order-1 md:order-2">
+                  <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center shadow-lg relative z-10">
+                  </div>
+                </div>
+                <div class="md:w-5/12 md:pl-1 order-3 hidden md:block"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+	 
+
+    <!-- 针道 -->
+<section id="needle-way" class="min-h-screen pt-16 flex flex-col bg-gradient-to-b from-primary to-secondary/30">
+  <div class="py-20">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+          针道
+          <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+        </h2>
+        <p class="text-neutral/80 max-w-3xl mx-auto mt-6 text-justify">
+          千年银针，贯穿古今经络之道。十四经脉穴位如星辰遍布人体，腧穴与病症的关联图谱，揭开针灸疗愈的奥秘。从《黄帝内经》到《针灸甲乙经》，从扁鹊、华佗到孙思邈，古代贤哲与典籍构筑起深厚的针道根基，让这门古老医术跨越时空，持续焕发着生命的智慧与力量。
+        </p>
+      </div>
+
+      <!-- 核心修改：移除 md:grid-cols-2，默认单列上下布局 -->
+      <div class="grid gap-12"> <!-- 这里删除了 md:grid-cols-2 -->
+        <!-- 典籍里的针灸 -->
+        <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group w-[1200px] mx-auto " id="典籍名人">
+          <div class="relative h-[750px] overflow-hidden">
+            <img src="针道/典籍数据图.jpg" alt="古代针灸典籍" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+            <h3 class="absolute bottom-4 left-4 text-2xl font-serif font-bold text-neutral text-shadow">典籍里的针灸</h3>
+          </div>
+          <div class="p-6">
+            <p class="text-neutral/80 mb-4">
+              中国古代针灸典籍是中医宝库中的璀璨明珠，记录了数千年来针灸学的发展和实践经验。从《黄帝内经》到《针灸大成》，每一部著作都代表了当时针灸学的最高成就。
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">《黄帝内经》</h4>
+                <p class="text-sm text-neutral/70">
+                  中国现存最早的医学典籍，成书于春秋战国至西汉时期，分为《素问》和《灵枢》两部分，其中《灵枢》‌聚焦针灸学，详细阐述经络分布、腧穴定位及针刺疗法，为后世针灸学奠定理论基础。‌‌
+                </p>
+              </div>
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">《针灸大成》</h4>
+                <p class="text-sm text-neutral/70">
+                  明代杨继洲撰写的中医典籍。本书较全面论述针灸理论、操作手法等，并考定腧穴名称和部位，记述历代名家针灸医案，为对明以前针灸学术的又一总结。
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 text-right">
+              <a href="典籍名人链接图.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+                深入了解 <i class="fa fa-long-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+		  
+
+
+        <!-- 经穴藏象·症随脉走 -->
+        <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group w-[1200px] mx-auto" id="十四经脉">
+          <div class="relative h-[750px] overflow-hidden">
+            <img src="针道/十四经脉数据图.jpg" alt="经络穴位图" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+            <h3 class="absolute bottom-4 left-4 text-2xl font-serif font-bold text-neutral text-shadow">经穴藏象·症随脉走</h3>
+          </div>
+          <div class="p-6">
+            <p class="text-neutral/80 mb-4">
+              经络是人体气血运行的通道，穴位则是经络上的关键节点。中医通过观察脉象和症状，判断疾病所在，并选择相应的穴位进行治疗，体现了"症随脉走"的诊疗思路。
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">十四经脉</h4>
+                <p class="text-sm text-neutral/70">
+                  中医经络系统的核心组成部分，由十二经脉（手三阴经、手三阳经、足三阴经、足三阳经）加上任脉和督脉共同组成。
+                </p>
+              </div>
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">奇经八脉</h4>
+                <p class="text-sm text-neutral/70">
+                  包括任脉、督脉、冲脉、带脉、阴维脉、阳维脉、阴跷脉、阳跷脉，对十二经脉的气血起蓄积和渗灌作用。
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 text-right">
+              <a href="十四经脉链接图.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+                深入了解 <i class="fa fa-long-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+	  
+   <!-- 针术 -->
+<section id="needle-technique" class="min-h-screen pt-16 flex flex-col bg-gradient-to-b from-secondary/30 to-primary">
+  <div class="py-20">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+          针术
+          <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+        </h2>
+        <p class="text-neutral/80 max-w-3xl mx-auto mt-6 text-justify">
+          千年银针，演绎古今针术之妙。电针脉动，借科技之力通经活络；刺针放血，循古法以泻实祛瘀；艾炷温灼，凭热力而扶阳固本。三种针法各展奇能，对应病症与穴位精准匹配，更有共用穴位暗藏妙效。从古老砭石到现代电疗，针术一脉相承，历经岁月淬炼，以独特的疗愈智慧，持续守护着人们的健康与安宁。
+        </p>
+      </div>
+
+     <!-- 修改：移除 md:grid-cols-2，保持默认单列布局；增加 gap 使上下间距更舒适 -->
+<div class="grid gap-16" id="acupuncture-techniques"> <!-- 添加ID -->
+  <!-- 诸针治百病 -->
+  <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group  w-[1000px] mx-auto">
+    <!-- 其余内容保持不变 -->
+        
+          <div class="relative h-[950px] overflow-hidden">
+            <!-- 高度调整为 500px，更适合垂直布局的视觉比例 -->
+            <img src="针术/针灸刺法数据图.jpg" alt="针灸治疗" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+            <h3 class="absolute bottom-4 left-4 text-2xl font-serif font-bold text-neutral text-shadow">诸针治百病</h3>
+          </div>
+          <div class="p-6">
+            <p class="text-neutral/80 mb-4">
+              中医针灸发展出了多种针具和针法，每种针具都有其独特的适用范围和治疗效果。从传统的毫针到三棱针、皮肤针，不同的针具在治疗各种疾病中发挥着重要作用。
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">毫针</h4>
+                <p class="text-sm text-neutral/70">
+                  最常用的针具，粗细不等，适用于各种病症，通过提插、捻转等手法刺激穴位。
+                </p>
+              </div>
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">电针</h4>
+                <p class="text-sm text-neutral/70">
+                  用针刺入腧穴得气后，在针上通以（感应）人体生物电的微量电流波，分为：1.连续波2.断续波。以刺激穴位，治疗疾病的一种疗法。
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 text-right">
+              <a href="诸针治百病.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+                深入了解 <i class="fa fa-long-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 单穴疗诸疾 -->
+        <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group w-[1000px] mx-auto" id="单穴疗诸疾">
+          <!-- 同样增加 max-w-2xl 保持与上方卡片宽度一致，确保垂直对齐 -->
+          <div class="relative h-[900px] overflow-hidden">
+            <img src="针术/针灸刺法数据图陈 电针.jpg" alt="穴位图示" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+            <h3 class="absolute bottom-4 left-4 text-2xl font-serif font-bold text-neutral text-shadow">单穴疗诸疾</h3>
+          </div>
+          <div class="p-6">
+            <p class="text-neutral/80 mb-4">
+              有些穴位具有特殊的治疗作用，被称为"特定穴"。例如足三里能燥化脾湿，生发胃气，合谷可治疗头痛、牙痛等多种疼痛，体现了中医"一穴多用"的智慧。
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">足三里</h4>
+                <p class="text-sm text-neutral/70">
+                  位于小腿外侧，是足阳明胃经的合穴，能调理脾胃、补中益气、通经活络、增强免疫力。
+                </p>
+              </div>
+              <div class="bg-secondary/20 p-4 rounded-lg">
+                <h4 class="font-bold text-accent mb-2">合谷</h4>
+                <p class="text-sm text-neutral/70">
+                  位于手背，是手阳明大肠经的原穴，主治头痛、目赤肿痛、牙痛、牙关紧闭等头面五官疾病。
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 text-right">
+              <a href="单穴疗诸疾.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+                深入了解 <i class="fa fa-long-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- 针语 -->
+    <section id="needle-talk" class="min-h-screen pt-16 flex flex-col bg-gradient-to-b from-primary to-secondary/30">
+      <div class="py-20">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+              针语
+              <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+            </h2>
+            <p class="text-neutral/80 max-w-3xl mx-auto mt-6 text-justify">
+              千年银针，串起古今针道遗章。从《标幽赋》的字字珠玑，到《百症赋》的辨证精华，针灸歌赋以韵载道，传承医理精髓。帝王垂注，将针灸纳入宫廷御术，见证其尊荣地位与深远影响。今朝高校林立，针灸推拿专业各展所长，从北京中医药大学到上海中医药大学，莘莘学子研习针道，让古老技艺在现代教育中薪火相传，为守护生命健康注入新的活力。
+            </p>
+          </div>
+
+        <div class="grid md:grid-cols-2 gap-8"> <!-- 修改为 md:grid-cols-2 -->
+  <!-- 帝王也针灸 -->
+  <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group" id="帝王针灸">
+    <div class="relative h-[850px] overflow-hidden">
+      <img src="针语/帝王数据图.jpg" alt="古代帝王" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+      <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+      <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">帝王也针灸</h3>
+    </div>
+    <div class="p-6">
+      <p class="text-neutral/80 mb-4">
+        历史上，许多帝王将相都曾接受过针灸治疗。针灸不仅是普通百姓的医疗手段，也为皇室贵族的健康保驾护航，体现了其疗效的广泛性和可靠性。
+      </p>
+      <div class="bg-secondary/20 p-4 rounded-lg mb-4">
+        <h4 class="font-bold text-accent mb-2">唐高宗与针灸</h4>
+        <p class="text-sm text-neutral/70">
+         唐高宗曾患头风眩，秦鹤鸣为其针刺治疗后收效显著，而他对针灸的接纳，也从侧面推动了这门技艺在宫廷及社会中的认可与传播。
+        </p>
+      </div>
+      <div class="mt-4 text-right">
+        <a href="帝王时间图.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+          了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高校育针灸 -->
+  <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group" id="高校">
+    <div class="relative h-[850px] overflow-hidden">
+      <img src="针语/高校.jpg" alt="针灸教学" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+      <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+      <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">高校育针灸</h3>
+    </div>
+    <div class="p-6">
+      <p class="text-neutral/80 mb-4">
+        现代中国的高等中医药院校系统地教授针灸学，培养了大量专业人才。针灸教育不仅注重传统理论的传承，也结合现代医学知识，推动针灸学的创新发展。
+      </p>
+      <div class="bg-secondary/20 p-4 rounded-lg mb-4">
+        <h4 class="font-bold text-accent mb-2">北京中医药大学</h4>
+        <p class="text-sm text-neutral/70">
+          该校针灸推拿学院是中国最早成立的针灸专业教学机构之一，拥有一流的师资队伍和科研设施。
+        </p>
+      </div>
+      <div class="mt-4 text-right">
+        <a href="高校.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+          了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 歌赋咏诵针灸 - 新增 md:col-span-2 使其在中等屏幕及以上时占据整行 -->
+  <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group md:col-span-2" id="针灸歌赋">
+    <div class="relative h-[950px] overflow-hidden">
+      <img src="针语/歌赋数据图.jpg" alt="古代文献" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+      <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+      <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">歌赋咏针灸</h3>
+    </div>
+    <div class="p-6">
+      <p class="text-neutral/80 mb-4">
+        古代医家为了便于记忆和传承针灸知识，创作了许多针灸歌赋。这些歌赋语言优美、韵律和谐，既是医学经典，也是文学佳作。
+      </p>
+      <div class="bg-secondary/20 p-4 rounded-lg mb-4">
+        <h4 class="font-bold text-accent mb-2">《百症赋》</h4>
+        <p class="text-sm text-neutral/70">
+          由明代针灸学家高武首次收录于《针灸聚英》并流传至今。以歌赋形式列举了近百种病症的针灸治疗方法，至今仍被广泛应用于临床。
+        </p>
+      </div>
+      <div class="mt-4 text-right">
+        <a href="针灸歌赋链接图.html" class="text-accent hover:text-accent/80 inline-flex items-center font-medium">
+          了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 动物针灸 -->
+    <section id="animal-acupuncture" class="min-h-screen pt-16 flex flex-col bg-gradient-to-b from-secondary/30 to-primary">
+      <div class="py-20">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+              动物针灸
+              <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+            </h2>
+            <p class="text-neutral/80 max-w-3xl mx-auto mt-6">
+              针灸不仅适用于人类，也被用于治疗动物疾病，为兽医领域提供了新的治疗手段。
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- 案例1 -->
+            <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group">
+              <div class="relative h-56 overflow-hidden">
+                <img src="动物针灸/蓝猫.jpg" alt="动物针灸案例" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+                <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">猫肌肉神经疾病</h3>
+              </div>
+              <div class="p-6">
+                <p class="text-neutral/80 mb-4">
+                 2月龄蓝猫突然四肢瘫痪。自行用过抗生素和口服钙制剂2天后无效。基本神经学检查发现姿势反应消失，脑神经反射正常，脊髓反射消失。中兽医治疗，中药配合针灸;
+                </p>
+                <div class="flex justify-between items-center mt-4">
+                  <span class="text-sm text-neutral/60">针灸穴位：抢风，曲池，大椎，百会，后三里，后海，解溪，后跟，前后六缝。电针连续波留针15分钟。隔天针灸一次。第10天后完全可以自由运动，一切恢复正常。</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例2 -->
+            <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group">
+              <div class="relative h-56 overflow-hidden">
+                <img src="动物针灸/柯基.jpg" alt="动物针灸案例" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+                <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">犬类椎间盘疾病</h3>
+              </div>
+              <div class="p-6">
+                <p class="text-neutral/80 mb-4">
+                   2012年12月08日一只柯基犬Yosh被发现跛行，右侧表现明显，当天到一家宠物医院接受针灸治疗，9日病情变为严重，不能站立，不能走路。接受内科治疗后，病情未见好转，日益严重，后进行灸治疗。
+                </p>
+                <div class="flex justify-between items-center mt-4">
+                  <span class="text-sm text-neutral/60">针灸穴位：风池、大椎、大柱、天平、命门、肾俞、腰百会、环跳、肩井、曲池、后溪、委中、足三里、太白等穴位；电针穴位：大椎-命门，环跳-太白；艾灸穴位：大椎、命门。</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例3 -->
+            <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group">
+              <div class="relative h-56 overflow-hidden">
+                <img src="动物针灸/博美.png" alt="动物针灸案例" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+                <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">犬类热衰竭</h3>
+              </div>
+              <div class="p-6">
+                <p class="text-neutral/80 mb-4">
+                 一只约6岁3个月的博美犬多多，曝晒于高温太阳底下行走后，气喘吁吁前来抢救。本病采取吸氧，物理降温，血针穴位，放血治疗，镇静安神、强心利尿、纠正酸中毒、促进机体散热、维持心肺和肝肾功能输液等治疗措施。
+                </p>
+                <div class="flex justify-between items-center mt-4">
+                  <span class="text-sm text-neutral/60">针灸穴位：耳尖，尾尖，山根等穴位。</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 动物针灸表格 -->
+          <div class="mt-16 bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg">
+            <div class="p-6">
+              <h3 class="text-2xl font-serif font-bold text-neutral mb-6">疾病类型和针刺穴位</h3>
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-secondary/30">
+                  <thead>
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">疾病类型</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">针刺穴位</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">疾病类型</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-accent uppercase tracking-wider">针刺穴位</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-secondary/20">
+                    <tr class="hover:bg-secondary/10 transition-colors duration-200">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                         
+                          <div>
+                            <div class="text-sm font-medium text-neutral">慢性哮喘</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        定喘，肺俞，天突，太渊，复溜
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                       分离焦虑
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        安神，神门，厥阴俞，心俞
+                      </td>
+                    </tr>
+                    <tr class="hover:bg-secondary/10 transition-colors duration-200">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          
+                          <div>
+                            <div class="text-sm font-medium text-neutral">腱/韧带损伤</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        局部穴位+阳陵泉，足临泣，太冲，肝俞
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        慢性耳炎
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        听宫 ，翳风 ，耳尖，涌泉 ，耳门
+					  </td>
+                    </tr>
+                    <tr class="hover:bg-secondary/10 transition-colors duration-200">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          
+                          <div>
+                            <div class="text-sm font-medium text-neutral">癫痫</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        百会 ，风池 ，大风门，脑俞，膈俞，肝俞 ，血海 ，太冲
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        背部疼痛
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral/80">
+                        百会，肾俞，肝俞 ，肾俞 ，委中，至阴
+					</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 针灸禁忌 -->
+    <section id="taboo" class="min-h-screen pt-16 flex flex-col bg-gradient-to-b from-primary to-secondary/30">
+      <div class="py-20">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+              针灸禁忌
+              <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+            </h2>
+            <p class="text-neutral/80 max-w-3xl mx-auto mt-6">
+              针灸虽然是一种安全有效的治疗方法，但也有一些禁忌和注意事项，需要专业医师严格掌握。
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-12">
+            <!-- 禁忌列表 -->
+            <div class="bg-neutral/5 rounded-xl border border-secondary/30 shadow-lg p-8">
+              <h3 class="text-xl font-serif font-bold text-accent mb-6">针灸禁忌情况</h3>
+              <ul class="space-y-12">
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">出血性疾病患者</h4>
+                    <p class="text-neutral/70">如血友病、血小板减少性紫癜等，针灸可能导致出血不止。</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">皮肤感染、溃疡部位</h4>
+                    <p class="text-neutral/70">在皮肤感染、溃疡、瘢痕或肿瘤部位不宜进行针灸，以免加重病情。</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">孕妇</h4>
+                    <p class="text-neutral/70">某些穴位如合谷、三阴交等可能引起子宫收缩，孕妇慎用，尤其是怀孕初期和晚期。</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">极度疲劳、饥饿或醉酒状态</h4>
+                    <p class="text-neutral/70">此时人体机能较弱，针灸可能引发晕针等不良反应。</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">严重心脏病、高血压患者</h4>
+                    <p class="text-neutral/70">在病情不稳定时不宜进行针灸，需在医生指导下进行。</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">精神疾病患者</h4>
+                    <p class="text-neutral/70">如癫痫、精神分裂症等，在发作期不宜针灸，需在病情稳定时由专业医师操作。</p>
+                  </div>
+                </li>
+				<li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">糖尿病患者</h4>
+                    <p class="text-neutral/70">皮肤愈合能力差，需严格消毒，避免感染。</p>
+                  </div>
+                </li>
+				<li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">晕针史或恐惧针灸者</h4>
+                    <p class="text-neutral/70">建议选择卧位治疗，减少晕针风险。</p>
+                  </div>
+                </li>
+				<li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-accent mt-1 mr-3"></i>
+                  <div>
+                    <h4 class="font-bold text-neutral">电针或温针灸</h4>
+                    <p class="text-neutral/70">需注意电流强度及艾灸温度，避免烫伤或肌肉痉挛。</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 注意事项 -->
+            <div class="bg-neutral/5 rounded-xl border border-secondary/30 shadow-lg p-8">
+              <h3 class="text-xl font-serif font-bold text-accent mb-6">针灸前后注意事项</h3>
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div class="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center mr-4 flex-shrink-0">
+                    <i class="fa fa-clock-o text-accent"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-neutral mb-2">针灸前</h4>
+                    <ul class="space-y-2 text-neutral/70">
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>保持充足睡眠，避免过度疲劳</span>
+                      </li>
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>不要空腹针灸，可在进食后1-2小时进行</span>
+                      </li>
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>告知医师自己的病史、过敏史及正在服用的药物</span>
+                      </li>
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>放松心情，避免过度紧张</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center mr-4 flex-shrink-0">
+                    <i class="fa fa-medkit text-accent"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-neutral mb-2">针灸后</h4>
+                    <ul class="space-y-2 text-neutral/70">
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>针孔处不要立即沾水，避免感染</span>
+                      </li>
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>避免剧烈运动和风吹受凉</span>
+                      </li>
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>部分人可能出现轻微头晕、乏力，属正常反应，休息后可缓解</span>
+                      </li>
+                      <li class="flex items-center">
+                        <i class="fa fa-check text-accent mr-2"></i>
+                        <span>如出现持续不适或异常反应，及时联系医师</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div><br>
+<br>
+
+				
+<!-- 针灸知识互动模块 -->
+<div class="mb-16 fade-in-section">
+  <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg p-6">
+    <h3 class="text-2xl font-serif font-bold text-neutral mb-6 text-center">针灸知识小测验</h3>
+    
+    <div class="relative">
+      <!-- 滑动控制按钮 -->
+      <button id="prev-question" class="absolute left-[-10px] top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center text-accent z-10 opacity-70 hover:opacity-100 transition-opacity">
+        <i class="fa fa-chevron-left"></i>
+      </button>
+      
+      <button id="next-question" class="absolute right-[-10px] top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center text-accent z-10 opacity-70 hover:opacity-100 transition-opacity">
+        <i class="fa fa-chevron-right"></i>
+      </button>
+      
+      <!-- 测验容器 -->
+      <div id="quiz-container" class="overflow-hidden">
+        <div id="quiz-slider" class="flex transition-transform duration-300">
+          <!-- 第1题 -->
+          <div class="quiz-question min-w-full px-4">
+            <div class="bg-white/50 rounded-lg p-5 border border-secondary/20 h-full">
+              <h4 class="text-xl font-bold text-neutral mb-4">1. 针灸治疗的主要理论基础是？</h4>
+              <div class="space-y-3">
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q1" value="a" class="mr-3">
+                  <span>经络学说</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q1" value="b" class="mr-3">
+                  <span>五行学说</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q1" value="c" class="mr-3">
+                  <span>阴阳学说</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q1" value="d" class="mr-3">
+                  <span>以上都是</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 第2题 -->
+          <div class="quiz-question min-w-full px-4">
+            <div class="bg-white/50 rounded-lg p-5 border border-secondary/20 h-full">
+              <h4 class="text-xl font-bold text-neutral mb-4">2. 足三里穴位于人体的哪个部位？</h4>
+              <div class="space-y-3">
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q2" value="a" class="mr-3">
+                  <span>手部</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q2" value="b" class="mr-3">
+                  <span>足部</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q2" value="c" class="mr-3">
+                  <span>小腿外侧</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q2" value="d" class="mr-3">
+                  <span>腹部</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 第3题 -->
+          <div class="quiz-question min-w-full px-4">
+            <div class="bg-white/50 rounded-lg p-5 border border-secondary/20 h-full">
+              <h4 class="text-xl font-bold text-neutral mb-4">3. 世界卫生组织（WHO）认可针灸治疗的病症不包括？</h4>
+              <div class="space-y-3">
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q3" value="a" class="mr-3">
+                  <span>头痛和偏头痛</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q3" value="b" class="mr-3">
+                  <span>高血压</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q3" value="c" class="mr-3">
+                  <span>癌症</span>
+                </label>
+                <label class="flex items-center p-3 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-all">
+                  <input type="radio" name="q3" value="d" class="mr-3">
+                  <span>术后恶心呕吐</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 页码指示器 -->
+    <div class="flex justify-center mt-4 space-x-2">
+      <button class="w-3 h-3 rounded-full bg-accent" data-page="0"></button>
+      <button class="w-3 h-3 rounded-full bg-neutral/30" data-page="1"></button>
+      <button class="w-3 h-3 rounded-full bg-neutral/30" data-page="2"></button>
+    </div>
+    
+    <!-- 提交按钮 -->
+    <div class="mt-6 text-center">
+      <button id="submit-all" class="bg-accent hover:bg-accent/90 text-white font-bold py-2 px-6 rounded-md transition-colors">
+        提交所有答案
+      </button>
+      <div id="quiz-result" class="mt-3 hidden text-center"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 初始化变量
+const slider = document.getElementById('quiz-slider');
+const questions = document.querySelectorAll('.quiz-question');
+const prevBtn = document.getElementById('prev-question');
+const nextBtn = document.getElementById('next-question');
+const pageIndicators = document.querySelectorAll('[data-page]');
+const submitBtn = document.getElementById('submit-all');
+const resultEl = document.getElementById('quiz-result');
+let currentPage = 0;
+
+// 更新滑动位置
+function updateSlider() {
+  slider.style.transform = `translateX(-${currentPage * 100}%)`;
+  
+  // 更新页码指示器
+  pageIndicators.forEach((indicator, index) => {
+    if (index === currentPage) {
+      indicator.classList.remove('bg-neutral/30');
+      indicator.classList.add('bg-accent');
+    } else {
+      indicator.classList.remove('bg-accent');
+      indicator.classList.add('bg-neutral/30');
+    }
+  });
+  
+  // 更新按钮状态
+  prevBtn.disabled = currentPage === 0;
+  nextBtn.disabled = currentPage === questions.length - 1;
+}
+
+// 上一题/下一题按钮事件
+prevBtn.addEventListener('click', function() {
+  if (currentPage > 0) {
+    currentPage--;
+    updateSlider();
+  }
+});
+
+nextBtn.addEventListener('click', function() {
+  if (currentPage < questions.length - 1) {
+    currentPage++;
+    updateSlider();
+  }
+});
+
+// 页码指示器点击事件
+pageIndicators.forEach(indicator => {
+  indicator.addEventListener('click', function() {
+    currentPage = parseInt(this.dataset.page);
+    updateSlider();
+  });
+});
+
+// 提交所有答案
+submitBtn.addEventListener('click', function() {
+  let correctCount = 0;
+  const totalQuestions = questions.length;
+  const correctAnswers = {
+    q1: 'd',
+    q2: 'c',
+    q3: 'c'
+  };
+  
+  // 检查每道题
+  for (let i = 1; i <= totalQuestions; i++) {
+    const questionName = `q${i}`;
+    const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+    
+    if (selectedAnswer && selectedAnswer.value === correctAnswers[questionName]) {
+      correctCount++;
+      
+      // 高亮正确答案
+      selectedAnswer.closest('label').classList.add('bg-green-50', 'border-green-500');
+    } else if (selectedAnswer) {
+      // 高亮错误答案
+      selectedAnswer.closest('label').classList.add('bg-red-50', 'border-red-500');
+      
+      // 高亮正确答案选项
+      document.querySelector(`input[name="${questionName}"][value="${correctAnswers[questionName]}"]`)
+        .closest('label').classList.add('bg-green-50', 'border-green-500');
+    }
+  }
+  
+  // 显示结果
+  resultEl.textContent = `您答对了 ${correctCount}/${totalQuestions} 题`;
+  resultEl.className = `mt-3 text-center ${correctCount === totalQuestions ? 'text-green-500' : 'text-accent'}`;
+  resultEl.classList.remove('hidden');
+  
+  // 禁用提交按钮
+  submitBtn.disabled = true;
+  submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+});
+
+// 初始化滑块
+updateSlider();
+</script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 世界针灸 -->
+    <section id="world-acupuncture" class="min-h-screen pt-16 flex flex-col bg-gradient-to-b from-secondary/30 to-primary">
+      <div class="py-20">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-serif font-bold text-neutral mb-4 relative inline-block">
+              世界针灸
+              <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></span>
+            </h2>
+            <p class="text-neutral/80 max-w-3xl mx-auto mt-6">
+              针灸作为中医的重要组成部分，已经传播到世界各地，被不同文化背景的人们所接受和应用。
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- 案例1 -->
+            <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group">
+              <div class="relative h-96 overflow-hidden">
+                <img src="世界针灸/日本.jpg" alt="世界针灸案例" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+                <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">日本针灸</h3>
+              </div>
+              <div class="p-6">
+                <p class="text-neutral/80 mb-4">
+                  日本针灸（汉方针灸）以保存古法技术为核心，发展出独特的 "米粒灸"（艾炷细小如米）和 "押手" 触诊技法，强调温和刺激与精准得气传导。
+                </p>
+                <div class="bg-secondary/20 p-4 rounded-lg mb-4">
+                  <h4 class="font-bold text-accent mb-2">特色</h4>
+                  <p class="text-sm text-neutral/70">
+                    日本针灸教育体系拥有严格的国家资格考试制度（需3年以上专业学习），并形成全民预防保健文化，如青年灸风门穴防感冒、中年灸足三里延寿。
+                  </p>
+				  </div>
+              </div>
+            </div>
+
+            <!-- 案例2 -->
+            <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group">
+              <div class="relative h-96 overflow-hidden">
+                <img src="世界针灸/法国2.jpg" alt="世界针灸案例" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+                <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">欧洲针灸</h3>
+              </div>
+              <div class="p-6">
+                <p class="text-neutral/80 mb-4">
+                  针灸在欧洲的传播始于17世纪，目前已被许多欧洲国家认可为补充和替代医学。欧洲针灸融合了传统中医理论和西方解剖生理学知识。
+                </p>
+                <div class="bg-secondary/20 p-4 rounded-lg mb-4">
+                  <h4 class="font-bold text-accent mb-2">特色</h4>
+                  <p class="text-sm text-neutral/70">
+                    欧洲针灸以传统中医理论为主导，主流流派为英国 "五行针灸"和法国 "耳针疗法"。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例3 -->
+            <div class="bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg group">
+              <div class="relative h-96 overflow-hidden">
+                <img src="世界针灸/美国.jpg" alt="世界针灸案例" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
+                <h3 class="absolute bottom-4 left-4 text-xl font-serif font-bold text-neutral text-shadow">美国针灸</h3>
+              </div>
+              <div class="p-6">
+                <p class="text-neutral/80 mb-4">
+                  针灸在美国的规模化发展始于 20 世纪 70 年代，目前已形成成熟的教育和执业体系。广泛用于慢性疼痛、失眠、术后康复等领域。
+                </p>
+                <div class="bg-secondary/20 p-4 rounded-lg mb-4">
+                  <h4 class="font-bold text-accent mb-2">特色</h4>
+                  <p class="text-sm text-neutral/70">
+                   美国针灸教育注重科学研究和临床实践，47 个州立法承认针灸。加州、纽约等州将其纳入医保体系，部分商业保险也覆盖相关治疗费用。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 世界针灸组织 -->
+          <div class="mt-16 bg-neutral/5 rounded-xl overflow-hidden border border-secondary/30 shadow-lg">
+            <div class="p-6">
+              <h3 class="text-2xl font-serif font-bold text-neutral mb-6">国际针灸组织与发展</h3>
+              <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="text-xl font-bold text-accent mb-4">世界卫生组织(WHO)与针灸</h4>
+                  <ul class="space-y-3 text-neutral/80">
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                      <span>1979年，联合国世界卫生组织(WHO)提出了43种推荐针灸治疗的适应病症，并向全世界推广</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                      <span>为适应针灸临床治疗和研究发展需要，1996年11月召开了世界卫生组织意大利米兰会议，提出64种针灸适应症</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                      <span>2002年，世界卫生组织在《针灸临床研究报告的回顾与分析》的第三部分详细分析了针灸治疗病症的范围及疗效，提出77种针灸适应病症</span>
+                    </li>
+					  <li class="flex items-start">
+                      <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                      <span>2006年，WHO 发布《针灸穴位名称与定位国际标准》，该标准成为全球针灸教育、临床和研究的通用规范</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                      <span>WHO政策倡议<br>
+持续呼吁成员国将针灸整合至国家卫生系统，重点应用于 慢性疼痛管理（如腰痛、纤维肌痛）及 辅助肿瘤治疗（缓解化疗副作用）</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold text-accent mb-4">主要国际针灸组织</h4>
+                  <ul class="space-y-3 text-neutral/80">
+                    <li class="flex items-start">
+                      <i class="fa fa-globe text-accent mt-1 mr-3"></i>
+                      <span><strong>世界针灸学会联合会(WFAS)</strong>:1987年成立的非政府性针灸团体的国际联合组织，总部设在北京，是针灸领域最具影响力的国际组织之一</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-globe text-accent mt-1 mr-3"></i>
+                      <span><strong>国际医学针灸及相关技术理事会（ICMART）</strong>: 1983年在奥地利维也纳成立，是全世界规模最大的医学针灸学会伞式组织，涵盖全球60个国家</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-globe text-accent mt-1 mr-3"></i>
+                      <span><strong>德国传统针灸中医学会（AGTCM）</strong>: 始建于1954年，由1600多名医生和非医生会员组成。1995年加入世界针灸学会联合会，2009年起有代表进入世界针联执委会任职。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-globe text-accent mt-1 mr-3"></i>
+                      <span><strong>意大利针灸和传统中医协会</strong>: 成立于1987年，致力于促进针灸的发展以及与国内的科研机构，学术团体，政府机构合作。</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+<footer class="bg-primary border-t border-secondary/30">
+    <div class="container mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <!-- 品牌和描述区域 - 占据左侧4列 -->
+            <div class="md:col-span-4">
+                <h3 class="text-xl font-serif font-bold text-accent mb-4">
+                    <span class="inline-flex items-center text-2xl">
+                        <img src="首页/针灸图标.png" alt="针灸图标" class="w-8 h-8 object-contain mr-2">
+                        针行千年
+                    </span>
+                </h3>
+                
+                <!-- 调整后的描述文本：位置下移，字号放大 -->
+                <p class="text-neutral/70 mt-8 text-lg">
+                    探索针灸的奥秘世界，传承千年中医智慧，弘扬中华文化精髓。
+                </p>
+            </div>
+            
+            <!-- 文字区域 - 占据右侧8列 -->
+            <div class="md:col-span-8 pl-0 md:pl-2">
+                <p class="text-neutral/70 leading-relaxed [text-indent:2em]">
+                    针灸，这根细细的银针，承载的是千年的医学智慧与人文精神。“针行千年”的传承之路，见证了中医药文化从典籍保护到数字传播、从校园教育到国际交流的创新发展历程。在国家推动中医药文化海外交流的政策指引下，针灸正以其独特的理论体系和显著的临床疗效，成为中华文化走向世界的重要名片。展望未来，随着中医药文化弘扬工程的深入实施，这门古老的技艺必将在守正创新中持续焕发活力，不仅为健康中国建设注入传统智慧，更为构建人类卫生健康共同体贡献中国方案，让千年针道在新时代绽放更加夺目的光彩。
+                </p>
+            </div>
+        </div>
+        
+        <!-- 横向排列的快速链接 - 移至右下角 -->
+        <div class="mt-6 text-right">
+            <h4 class="text-lg font-bold text-neutral mb-3 inline-block ml-auto">快速链接</h4>
+            <div class="flex flex-wrap justify-end gap-x-6 gap-y-2">
+                <a href="#home" class="text-neutral/70 hover:text-accent transition-colors duration-200">首页</a>
+                <a href="#needle-way" class="text-neutral/70 hover:text-accent transition-colors duration-200">针道</a>
+                <a href="#needle-technique" class="text-neutral/70 hover:text-accent transition-colors duration-200">针术</a>
+                <a href="#needle-talk" class="text-neutral/70 hover:text-accent transition-colors duration-200">针语</a>
+                <a href="#animal-acupuncture" class="text-neutral/70 hover:text-accent transition-colors duration-200">动物针灸</a>
+                <a href="#taboo" class="text-neutral/70 hover:text-accent transition-colors duration-200">针灸禁忌</a>
+                <a href="#world-acupuncture" class="text-neutral/70 hover:text-accent transition-colors duration-200">世界针灸</a>
+            </div>
+        </div>
+        
+        <!-- 版权信息 -->
+        <div class="border-t border-secondary/20 mt-10 pt-6 text-center">
+            <p class="text-neutral/60 text-sm">针行千年：用 1091 条数据为你讲述藏在针灸里的中国智慧</p>
+        </div>
+    </div>
+</footer>
+
+    
+     
+   
+
+  <!-- 回到顶部按钮 -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 bg-accent hover:bg-accent/90 text-primary w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 opacity-0 invisible">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+
+  <script>
+    // 导航栏滚动效果
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-primary/95');
+        navbar.classList.remove('bg-primary/80');
+      } else {
+        navbar.classList.add('bg-primary/80');
+        navbar.classList.remove('bg-primary/95');
+      }
+    });
+
+    // 移动端菜单切换
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      if (menuToggle.querySelector('i').classList.contains('fa-bars')) {
+        menuToggle.querySelector('i').classList.remove('fa-bars');
+        menuToggle.querySelector('i').classList.add('fa-times');
+      } else {
+        menuToggle.querySelector('i').classList.remove('fa-times');
+        menuToggle.querySelector('i').classList.add('fa-bars');
+      }
+    });
+
+    // 搜索框切换
+    const searchButton = document.getElementById('search-button');
+    const closeSearch = document.getElementById('close-search');
+    const searchContainer = document.getElementById('search-container');
+    searchButton.addEventListener('click', () => {
+      searchContainer.classList.remove('hidden');
+      searchContainer.classList.add('flex');
+      setTimeout(() => {
+        searchContainer.querySelector('input').focus();
+      }, 100);
+    });
+    closeSearch.addEventListener('click', () => {
+      searchContainer.classList.add('hidden');
+      searchContainer.classList.remove('flex');
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          // 关闭移动菜单
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            menuToggle.querySelector('i').classList.remove('fa-times');
+            menuToggle.querySelector('i').classList.add('fa-bars');
+          }
+        }
+      });
+    });
+
+    // 回到顶部按钮
+    const backToTopButton = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopButton.classList.remove('opacity-0', 'invisible');
+        backToTopButton.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopButton.classList.add('opacity-0', 'invisible');
+        backToTopButton.classList.remove('opacity-100', 'visible');
+      }
+    });
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // 图片懒加载
+    document.addEventListener("DOMContentLoaded", function() {
+      const lazyImages = document.querySelectorAll('img');
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const image = entry.target;
+              image.classList.add('opacity-100');
+              image.classList.remove('opacity-0');
+              imageObserver.unobserve(image);
+            }
+          });
+        });
+        lazyImages.forEach(image => {
+          imageObserver.observe(image);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+    
