@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>电针疗法</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #001524;
+            color: #f5f5dc;
+        }
+        #mynetwork {
+            width: 100%;
+            height: 900px;
+            border: 1px solid #15616d;
+            border-radius: 5px;
+            background-color: #001524;
+        }
+        h1 {
+            color: #f5f5dc;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 16px;
+            background-color: #ff7d00;
+            color: #f5f5dc;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #ff9e4f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="window.history.back()">返回</button>
+        <h1>电针疗法穴位网络关系图</h1>
+        <div id="mynetwork"></div>
+    </div>
+
+    <script type="text/javascript">
+        // 创建网络图
+        var container = document.getElementById('mynetwork');
+        
+        // 节点和边数据
+        var nodes = new vis.DataSet([]);
+        var edges = new vis.DataSet([]);
+        
+        // 网络图配置
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        
+        var options = {
+            nodes: {
+                font: {
+                    color: '#f5f5dc'
+                },
+                scaling: {
+                    min: 10,
+                    max: 30
+                }
+            },
+            edges: {
+                font: {
+                    color: '#f5f5dc'
+                }
+            },
+            physics: {
+                solver: "repulsion"
+            },
+            interaction: {
+                hover: true,
+                tooltipDelay: 100
+            },
+            configure: {
+                enabled: false
+            }
+        };
+        
+        // 初始化网络图
+        var network = new vis.Network(container, data, options);
+        
+        // 电针疗法数据
+        var diseaseData = [
+            {疾病: "2型糖尿病", 穴位: "天枢、曲池、足三里、丰隆"},
+            {疾病: "成人支气管哮喘", 穴位: "肺俞"},
+            {疾病: "单纯性肥胖病", 穴位: "曲池、合谷、天枢、滑肉门、水分、足三里、丰隆、内庭、中脘、气海"},
+            {疾病: "单纯性膈肌痉挛", 穴位: "夹脊、攒竹、内关、足三里"},
+            {疾病: "第三腰椎横突综合征", 穴位: "阿是、夹脊、风池、肩井、后溪、外关"},
+            {疾病: "多囊卵巢综合征", 穴位: "三阴交、子宫"},
+            {疾病: "功能性腹泻", 穴位: "天枢、曲池、足三里"},
+            {疾病: "肱骨外上髁髁炎", 穴位: "阿是、手三里、曲池肘膠"},
+            {疾病: "踝关节扭伤后疼痛", 穴位: "解溪、昆仑、太溪、阿是"},
+            {疾病: "踝扭伤", 穴位: "解溪、昆仑、丘墟、阿是"},
+            {疾病: "急性腰扭伤", 穴位: "后溪、夹脊、阿是"},
+            {疾病: "肩周炎", 穴位: "条口、肩鹘鹘、肩贞、肩前、肩膠"},
+            {疾病: "类风湿性关节炎", 穴位: "足三里、血海、阿是"},
+            {疾病: "慢性便秘", 穴位: "天枢、支沟、中髎髎、承山、足三里、上巨虚"},
+            {疾病: "慢性前列腺炎", 穴位: "肾俞、中膠、会阳、三阴交"},
+            {疾病: "面肌痉挛", 穴位: "百会、太阳、四白、迎香、下关、颊车、地仓、颧颧髅髅"},
+            {疾病: "面神经麻痹", 穴位: "地仓、颊车、阳白、下关、翳翳风、牵正"},
+            {疾病: "男性少弱精症", 穴位: "肾俞、三阴交"},
+            {疾病: "尿失禁", 穴位: "中膠、会阳、肾俞、次膠、三阴交"},
+            {疾病: "排卵障碍性不孕症", 穴位: "三阴交、子宫、足三里"},
+            {疾病: "膀胱过度活跃症", 穴位: "中膠、会阳、三阴交"},
+            {疾病: "痞满", 穴位: "足三里、中脘、梁门、天枢、上巨虚"},
+            {疾病: "偏头痛", 穴位: "阿是、丝竹空、率谷、太阳、风池、合谷、太冲、足临泣、阳陵泉、外关、内关、人中、神门、百会、头维、天柱"},
+            {疾病: "神经根型颈椎病", 穴位: "阿是、夹脊、风池、肩井、后溪、外关"},
+            {疾病: "失眠", 穴位: "百会、四神聪、神门、风池"},
+            {疾病: "术后尿潴潴留", 穴位: "八膠、秩边、水道、关元、三阴交、地机、阴陵泉、气海、中极、足三里、太溪"},
+            {疾病: "突发性耳聋", 穴位: "翳翳风、听会、耳门、听宫、中渚、风池、外关、风池、供血"},
+            {疾病: "胃下垂", 穴位: "中脘、气海、关元、天枢、足三里"},
+            {疾病: "膝骨关节炎", 穴位: "犊鼻、内膝眼、阳陵泉、阴陵泉、阿是、外膝眼、梁丘、血海"},
+            {疾病: "胁痛", 穴位: "阿是"},
+            {疾病: "血管性痴呆", 穴位: "四神聪、百会、神庭、风池"},
+            {疾病: "腰肌劳损", 穴位: "阿是、肾俞、大肠俞、委中、昆仑"},
+            {疾病: "腰椎间盘突出", 穴位: "夹脊"},
+            {疾病: "抑郁症", 穴位: "印堂、百会、神门、内关、风池、合谷、太冲、肝俞、三阴交、膻膻中、大陵、行间、侠溪、足三里、心俞、安眠、脾俞、太溪、照海、肾俞、哑门、天突、神道、大椎、少商、十宣、人中、少冲、中院、天枢、上巨虚、支沟、公孙、列缺"},
+            {疾病: "原发性三叉神经痛", 穴位: "下关穴、攒竹、头维、颧颧謬謬、承浆、颊车、合谷、外关穴"},
+            {疾病: "原发性痛经", 穴位: "次髂髂、足三里、三阴交"},
+            {疾病: "坐骨神经痛", 穴位: "腰突、夹脊、肾俞、大肠俞、环跳、委中、承山、阳陵泉、外丘、侠溪、昆仑"}
+        ];
+        
+        // 处理数据并添加到网络图中
+        function processData() {
+            // 1. 统计穴位使用频率
+            var acupointCounts = {};
+            
+            diseaseData.forEach(function(row) {
+                var acupoints = row.穴位.replace(/、/g, ",").replace(/，/g, ",").split(",");
+                acupoints.forEach(function(ap) {
+                    ap = ap.trim();
+                    if (ap) {
+                        acupointCounts[ap] = (acupointCounts[ap] || 0) + 1;
+                    }
+                });
+            });
+            
+            // 2. 添加节点
+            var nodeId = 1;
+            var diseaseNodes = {};
+            var acupointNodes = {};
+            
+            // 添加疾病节点
+            diseaseData.forEach(function(row, index) {
+                var diseaseId = "disease_" + index;
+                diseaseNodes[row.疾病] = diseaseId;
+                
+                nodes.add({
+                    id: diseaseId,
+                    label: row.疾病,
+                    color: "#ff7d00",
+                    shape: "diamond",
+                    size: 25,
+                    font: {size: 14, bold: true, color: '#f5f5dc'},
+                    title: "疾病: " + row.疾病
+                });
+                
+                // 添加穴位节点
+                var acupoints = row.穴位.replace(/、/g, ",").replace(/，/g, ",").split(",");
+                var uniqueAcupoints = {};
+                
+                acupoints.forEach(function(ap) {
+                    ap = ap.trim();
+                    if (ap && !uniqueAcupoints[ap]) {
+                        uniqueAcupoints[ap] = true;
+                        
+                        var count = acupointCounts[ap] || 1;
+                        var apId = "acupoint_" + ap;
+                        
+                        if (!acupointNodes[apId]) {
+                            acupointNodes[apId] = true;
+                            
+                            nodes.add({
+                                id: apId,
+                                label: ap,
+                                color: "#15616d",
+                                shape: "dot",
+                                size: 10 + count * 2,
+                                font: {size: 12, color: '#f5f5dc'},
+                                title: "穴位: " + ap + "<br>被" + count + "种疾病使用"
+                            });
+                        }
+                        
+                        // 添加边
+                        edges.add({
+                            from: diseaseId,
+                            to: apId,
+                            width: 0.5 + count * 0.1,
+                            title: row.疾病 + "→" + ap
+                        });
+                    }
+                });
+            });
+        }
+        
+        // 处理数据
+        processData();
+    </script>
+</body>
+</html>

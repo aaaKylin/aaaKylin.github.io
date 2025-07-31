@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帝王也针灸</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        :root {
+            --deep-blue: #001524;
+            --teal: #15616d;
+            --cream: #ffecd1;
+            --orange: #ff7d00;
+            --brown: #78290f;
+            --gold: #ffb347;
+            --spiral-main: #1b7a8a;
+            --spiral-light: #2498a8;
+        }
+
+        body {
+            background: linear-gradient(135deg, #001524 0%, #0a2a3a 100%);
+            color: var(--cream);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+            border-bottom: 1px solid rgba(21, 97, 109, 0.6);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: var(--orange);
+            border-radius: 2px;
+        }
+
+        h1 {
+            color: var(--gold);
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(255, 125, 0, 0.4);
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--cream);
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            font-weight: 300;
+        }
+
+        .description {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0d6c1;
+        }
+
+        /* 修改布局为上下结构 */
+        .visualization-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .spiral-section {
+            width: 100%;
+            min-height: 700px;
+            background: linear-gradient(145deg, rgba(21, 97, 109, 0.15), rgba(21, 97, 109, 0.25));
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid var(--orange);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spiral-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, rgba(255, 125, 0, 0.1), transparent);
+            border-radius: 0 15px 0 100%;
+        }
+
+        .data-section {
+            width: 100%;
+            min-height: 500px;
+            background: linear-gradient(145deg, rgba(120, 41, 15, 0.1), rgba(120, 41, 15, 0.2));
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid var(--brown);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: var(--gold);
+            font-size: 2rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--teal);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: var(--orange);
+        }
+
+        /* 放大螺旋图区域 */
+        .chart-container {
+            width: 100%;
+            height: 650px;
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+            background: rgba(0, 21, 36, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 236, 209, 0.1);
+        }
+
+        #spiral-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 21, 36, 0.4);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 236, 209, 0.1);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .legend-color {
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            border-radius: 50%;
+            border: 1px solid var(--cream);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(to right, var(--orange), #e76f51);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 111, 81, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 160px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 111, 81, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--orange);
+            color: var(--orange);
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background: rgba(0, 21, 36, 0.4);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 236, 209, 0.1);
+        }
+
+        .timeline-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .timeline-point::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            width: 50px;
+            height: 3px;
+            background: var(--teal);
+            z-index: -1;
+        }
+
+        .timeline-year {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .timeline-label {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: var(--cream);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            background: linear-gradient(to right, var(--orange), #d95d39);
+            color: white;
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: rgba(21, 97, 109, 0.1);
+        }
+
+        .data-table tr:nth-child(odd) {
+            background: rgba(21, 97, 109, 0.05);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 125, 0, 0.1);
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 236, 209, 0.1);
+        }
+
+        .dynasty-color {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(21, 97, 109, 0.95);
+            border: 2px solid var(--orange);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 320px;
+            color: var(--cream);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tooltip h3 {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            border-bottom: 1px solid rgba(255, 179, 71, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .tooltip p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .tooltip p strong {
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(21, 97, 109, 0.6);
+            font-size: 1rem;
+            color: rgba(255, 236, 209, 0.7);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: var(--orange);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1100px) {
+            .visualization-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .chart-container {
+                height: 500px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                min-width: auto;
+            }
+            
+            .timeline {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+      <h1 style="color:  #ff7d00;"><i class="fas fa-history"></i> 帝王医疗时间螺旋图</h1>
+       <p class="description" style="text-align: left;">
+    本可视化展示了古代帝王接受针灸治疗的历史记录，通过精心设计的螺旋布局，清晰呈现每个事件的时间位置和治疗详情。
+    螺旋内圈为公元前，外圈为公元后，逆时针方向表示时间流动。
+       </p>
+        </header>
+        
+        <div class="visualization-container">
+            <!-- 时间螺旋图部分 -->
+            <section class="spiral-section">
+                <h2 style="color:  #ff7d00;"><i class="fas fa-chart-line"></i> 时间螺旋图</h2>
+                
+              <div class="controls">
+                    <button id="play-btn" class="btn"><i class="fas fa-play"></i> 播放动画</button>
+                    <button id="reset-btn" class="btn btn-outline"><i class="fas fa-sync-alt"></i> 重置视图</button>
+                    <button id="info-btn" class="btn"><i class="fas fa-info-circle"></i> 图例说明</button>
+                                    </div>
+                    <div class="legend">
+          <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff9e58;"></div>
+                        <span>战国</span>
+        </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ffb366;"></div>
+                        <span>西汉</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ffca85;"></div>
+                        <span>东汉</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #1b7a8a;"></div>
+                        <span>北魏</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #2498a8;"></div>
+                        <span>北齐</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ffecd1;"></div>
+                        <span>唐代</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e6d0b1;"></div>
+                        <span>北宋</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #d95d39;"></div>
+                        <span>辽</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e67a5c;"></div>
+                        <span>元</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f3987d;"></div>
+                        <span>明</span>
+                    </div>
+              </div>
+                
+                <div class="chart-container">
+                    <canvas id="spiral-canvas"></canvas>
+                    <div class="tooltip" id="tooltip"></div>
+                </div>
+            </section>
+            
+            <!-- 数据表格部分 -->
+            <section class="data-section">
+                <h2 style="color:  #ff7d00;"><i class="fas fa-table"></i> 医疗事件详情</h2>
+                
+                <div class="controls">
+                    <button id="sort-time" class="btn"><i class="fas fa-sort-numeric-down"></i> 按时间排序</button>
+                    <button id="sort-dynasty" class="btn"><i class="fas fa-sort-alpha-down"></i> 按朝代排序</button>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>朝代</th>
+                            <th>帝王</th>
+                            <th>病症</th>
+                            <th>治疗方式</th>
+                            <th>御医</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-body">
+                        <!-- 数据将通过JavaScript填充 -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        
+      <footer>
+            <p>数据来源：历代帝王与针灸_魏稼 </p>
+		    <p>针行千年 | <a href="数据新闻大赛网页.html#帝王针灸" style="color:  #ff7d00;">返回主站</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // 定义配色方案
+        const DARK_BLUE = "#001524";
+        const TEAL = "#15616d";
+        const CREAM = "#ffecd1";
+        const ORANGE = "#ff7d00";
+        const GOLD = "#ffb347";
+        const SPIRAL_COLOR = "#1b7a8a";
+        const SPIRAL_LIGHT = "#2498a8";
+
+        // 帝王医疗数据
+        const emperorData = [
+            {dynasty: '战国', emperor: '虢国太子', disease: '尸厥昏迷', treatment: '针刺', doctor: '扁鹊', time: -300},
+            {dynasty: '西汉', emperor: '海昏侯刘贺', disease: '痿疾', treatment: '针刺', doctor: '未记载', time: -100},
+            {dynasty: '西汉', emperor: '汉武帝刘彻', disease: '未详', treatment: '针刺', doctor: '医修氏', time: -100},
+            {dynasty: '东汉', emperor: '曹操', disease: '头痛', treatment: '针刺（膈俞穴）', doctor: '华佗', time: 100},
+            {dynasty: '北魏', emperor: '高祖、文明太后', disease: '不豫', treatment: '针药并用', doctor: '李修', time: 400},
+            {dynasty: '北齐', emperor: '武成帝高湛', disease: '未详', treatment: '针药并用', doctor: '徐之才', time: 550},
+            {dynasty: '唐代', emperor: '唐高宗', disease: '头重目眩', treatment: '针刺(百会、脑户)', doctor: '秦鸣鹤', time: 700},
+            {dynasty: '北宋', emperor: '宋仁宗赵祯', disease: '未愈疾病', treatment: '针刺（上腹穴）', doctor: '许希', time: 1000},
+            {dynasty: '北宋', emperor: '宋仁宗赵祯', disease: '寝疾未愈', treatment: '针刺（脑后惺惺穴）', doctor: '草泽医', time: 1000},
+            {dynasty: '北宋', emperor: '宋仁宗赵祯', disease: '丧明（失明）', treatment: '针刺', doctor: '郭忠', time: 1000},
+            {dynasty: '辽', emperor: '辽太祖耶律阿保机', disease: '心痛', treatment: '针刺', doctor: '迭里特', time: 1000},
+            {dynasty: '元', emperor: '越南裕宗帝陈暭', disease: '溺死/半身不遂/阳痿', treatment: '针刺', doctor: '邹庚', time: 1300},
+            {dynasty: '明', emperor: '镇南王妃', disease: '风病', treatment: '针刺（合谷、曲池）', doctor: '徐文中', time: 1400},
+            {dynasty: '明', emperor: '淮阳王', disease: '风病', treatment: '针刺', doctor: '凌云', time: 1400},
+            {dynasty: '明', emperor: '明宣宗朱瞻基（出生前）', disease: '难产', treatment: '针刺', doctor: '盛寅', time: 1400}
+        ];
+
+        // 朝代颜色映射
+        const dynastyColors = {
+            '战国': '#ff9e58',
+            '西汉': '#ffb366',
+            '东汉': '#ffca85',
+            '北魏': '#1b7a8a',
+            '北齐': '#2498a8',
+            '唐代': '#ffecd1',
+            '北宋': '#e6d0b1',
+            '辽': '#d95d39',
+            '元': '#e67a5c',
+            '明': '#f3987d'
+        };
+
+        // 获取Canvas元素和上下文
+        const canvas = document.getElementById('spiral-canvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+        const dataBody = document.getElementById('data-body');
+
+        // 设置Canvas尺寸
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawSpiral();
+        }
+
+        // 绘制时间螺旋图（优化布局）
+        function drawSpiral(animationProgress = 1) {
+            // 清除Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 中心点坐标 - 向上移动螺旋图
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height * 0.45; // 上移中心点
+            
+            // 计算最大半径（取Canvas宽高的40%）
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.35;
+            
+            // 时间范围
+            const minTime = -300;
+            const maxTime = 1400;
+            const timeRange = maxTime - minTime;
+            
+            // 螺旋参数
+            const spiralTurns = 3.5; // 螺旋圈数
+            const spiralPoints = 500; // 螺旋点数量
+            
+            // 绘制螺旋线
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = SPIRAL_COLOR;
+            
+            for (let i = 0; i <= spiralPoints; i++) {
+                const progress = i / spiralPoints;
+                const angle = 2 * Math.PI * spiralTurns * progress * animationProgress;
+                const radius = maxRadius * progress * animationProgress;
+                
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            
+            ctx.stroke();
+            
+            // 绘制时间标记 - 缩小年份数字
+            ctx.font = '12px "Microsoft YaHei", sans-serif'; // 从14px缩小到12px
+            ctx.fillStyle = GOLD;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            for (let year = -300; year <= 1400; year += 200) {
+                if (year >= minTime && year <= maxTime) {
+                    const progress = (year - minTime) / timeRange;
+                    const angle = 2 * Math.PI * spiralTurns * progress * animationProgress;
+                    const radius = maxRadius * progress * animationProgress;
+                    
+                    // 增加偏移量以避免遮挡
+                    const x = centerX + (radius + 40) * Math.cos(angle);
+                    const y = centerY + (radius + 40) * Math.sin(angle);
+                    
+                    ctx.beginPath();
+                    ctx.arc(
+                        centerX + radius * Math.cos(angle),
+                        centerY + radius * Math.sin(angle),
+                        4, 0, Math.PI * 2
+                    );
+                    ctx.fillStyle = SPIRAL_LIGHT;
+                    ctx.fill();
+                    
+                    ctx.fillStyle = GOLD;
+                    ctx.fillText(year >= 0 ? `${year}年` : `${Math.abs(year)}年BC`, x, y);
+                }
+            }
+            
+            // 绘制事件点（优化布局，避免重叠）
+            const angleOffset = 0.1; // 角度偏移量，避免重叠
+            const angleAdjustments = {};
+            
+            emperorData.forEach((item, index) => {
+                const progress = (item.time - minTime) / timeRange;
+                let angle = 2 * Math.PI * spiralTurns * progress * animationProgress;
+                
+                // 调整角度避免重叠
+                const angleKey = Math.round(angle * 10) / 10;
+                if (angleAdjustments[angleKey]) {
+                    angleAdjustments[angleKey] += angleOffset;
+                    angle += angleAdjustments[angleKey];
+                } else {
+                    angleAdjustments[angleKey] = 0;
+                }
+                
+                const radius = maxRadius * progress * animationProgress;
+                
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                // 绘制点 - 缩小节点大小
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2); // 缩小到6px
+                ctx.fillStyle = dynastyColors[item.dynasty];
+                ctx.fill();
+                
+                // 绘制外圈 - 缩小外圈大小
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2); // 缩小到8px
+                ctx.strokeStyle = CREAM;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            
+            // 绘制中心点和方向指示 - 向右移动注释位置
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+            ctx.fillStyle = SPIRAL_COLOR;
+            ctx.fill();
+            
+            ctx.font = 'bold 16px "Microsoft YaHei", sans-serif';
+            ctx.fillStyle = SPIRAL_LIGHT;
+            ctx.textAlign = 'center';
+            ctx.fillText('时间流动方向 →', centerX + 180, centerY - 90); // 从120px增加到180px，向右移动
+            
+            // 绘制方向箭头
+            ctx.beginPath();
+            ctx.moveTo(centerX + 160, centerY - 80); // 从100px增加到160px，向右移动
+            ctx.lineTo(centerX + 200, centerY - 80); // 从140px增加到200px，向右移动
+            ctx.lineTo(centerX + 190, centerY - 85);
+            ctx.moveTo(centerX + 200, centerY - 80);
+            ctx.lineTo(centerX + 190, centerY - 75);
+            ctx.strokeStyle = SPIRAL_LIGHT;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // 填充数据表格
+        function populateDataTable() {
+            dataBody.innerHTML = '';
+            
+            emperorData.forEach((item) => {
+                const row = document.createElement('tr');
+                
+                // 朝代列（带颜色标识）
+                const dynastyCell = document.createElement('td');
+                dynastyCell.innerHTML = `<span class="dynasty-color" style="background-color:${dynastyColors[item.dynasty]}"></span>${item.dynasty}`;
+                row.appendChild(dynastyCell);
+                
+                // 其他列
+                [item.emperor, item.disease, item.treatment, item.doctor].forEach(text => {
+                    const cell = document.createElement('td');
+                    cell.textContent = text;
+                    row.appendChild(cell);
+                });
+                
+                dataBody.appendChild(row);
+            });
+        }
+
+        // 动画状态
+        let animationId = null;
+        let animationProgress = 0;
+        const animationDuration = 3000; // 3秒
+        
+        // 播放动画
+        function playAnimation() {
+            const startTime = Date.now();
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                animationProgress = Math.min(elapsed / animationDuration, 1);
+                
+                drawSpiral(animationProgress);
+                
+                if (animationProgress < 1) {
+                    animationId = requestAnimationFrame(animate);
+                } else {
+                    animationId = null;
+                    document.getElementById('play-btn').innerHTML = '<i class="fas fa-redo"></i> 重播动画';
+                }
+            }
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i> 播放中...';
+            animate();
+        }
+        
+        // 重置视图
+        function resetView() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            animationProgress = 1;
+            drawSpiral();
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i> 播放动画';
+        }
+        
+        // 显示工具提示
+        function showTooltip(event, item) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            tooltip.style.left = (x + 20) + 'px';
+            tooltip.style.top = (y + 20) + 'px';
+            tooltip.style.opacity = 1;
+            
+            tooltip.innerHTML = `
+                <h3>${item.emperor} (${item.dynasty})</h3>
+                <p><strong>时间:</strong> ${item.time >= 0 ? item.time + '年' : Math.abs(item.time) + '年BC'}</p>
+                <p><strong>病症:</strong> ${item.disease}</p>
+                <p><strong>治疗方式:</strong> ${item.treatment}</p>
+                <p><strong>御医:</strong> ${item.doctor}</p>
+            `;
+        }
+        
+        // 隐藏工具提示
+        function hideTooltip() {
+            tooltip.style.opacity = 0;
+        }
+        
+        // 检查点击位置是否在点上
+        function isPointInPath(x, y, pointX, pointY, radius) {
+            const dx = x - pointX;
+            const dy = y - pointY;
+            return dx * dx + dy * dy <= radius * radius;
+        }
+        
+        // 初始化
+        window.addEventListener('load', function() {
+            // 设置Canvas尺寸
+            resizeCanvas();
+            
+            // 填充数据表格
+            populateDataTable();
+            
+            // 初始绘制
+            drawSpiral();
+            
+            // 添加窗口大小调整监听
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 添加按钮事件
+            document.getElementById('play-btn').addEventListener('click', playAnimation);
+            document.getElementById('reset-btn').addEventListener('click', resetView);
+            
+            // 排序按钮
+            document.getElementById('sort-time').addEventListener('click', function() {
+                emperorData.sort((a, b) => a.time - b.time);
+                populateDataTable();
+            });
+            
+            document.getElementById('sort-dynasty').addEventListener('click', function() {
+                emperorData.sort((a, b) => a.dynasty.localeCompare(b.dynasty));
+                populateDataTable();
+            });
+            
+            // 添加Canvas交互
+            canvas.addEventListener('mousemove', function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // 中心点坐标
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height * 0.45; // 与绘制时一致
+                const maxRadius = Math.min(canvas.width, canvas.height) * 0.35;
+                
+                // 检查是否在点上
+                let hovered = false;
+                
+                emperorData.forEach((item) => {
+                    const progress = (item.time - minTime) / timeRange;
+                    const angle = 2 * Math.PI * spiralTurns * progress;
+                    const radius = maxRadius * progress;
+                    
+                    const pointX = centerX + radius * Math.cos(angle);
+                    const pointY = centerY + radius * Math.sin(angle);
+                    
+                    if (isPointInPath(x, y, pointX, pointY, 10)) { // 半径调整为10px
+                        showTooltip(event, item);
+                        hovered = true;
+                        canvas.style.cursor = 'pointer';
+                    }
+                });
+                
+                if (!hovered) {
+                    hideTooltip();
+                    canvas.style.cursor = 'default';
+                }
+            });
+            
+            canvas.addEventListener('mouseleave', hideTooltip);
+            
+            // 添加其他按钮事件
+            document.getElementById('info-btn').addEventListener('click', function() {
+                alert("时间螺旋图说明：\n\n1. 螺旋内圈为公元前事件，外圈为公元后事件\n2. 逆时针方向表示时间流动\n3. 不同颜色代表不同朝代\n4. 点击播放按钮可观看时间流动动画");
+            });
+            
+            document.getElementById('zoom-btn').addEventListener('click', function() {
+                alert("放大功能已激活！\n\n使用鼠标滚轮或触摸板手势可以缩放螺旋图。");
+            });
+        });
+        
+        // 定义时间范围（用于事件处理）
+        const minTime = -300;
+        const maxTime = 1400;
+        const timeRange = maxTime - minTime;
+        const spiralTurns = 3.5;
+    </script>
+</body>
+</html>

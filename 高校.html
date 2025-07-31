@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高校育针灸</title>
+    <!-- 引入本地资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #001524 0%, #0a2c3d 100%);
+            }
+            .bg-card {
+                background: linear-gradient(145deg, rgba(21, 97, 109, 0.15) 0%, rgba(0, 21, 36, 0.3) 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            }
+            .border-gradient {
+                border-image: linear-gradient(to right, transparent, #ff7d00, transparent) 1;
+            }
+        }
+    </style>
+    <style>
+        :root {
+            --deep-blue: #001524;
+            --teal-gray: #15616d;
+            --cream: #ffecd1;
+            --orange: #ff7d00;
+            --brown: #78290f;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--cream);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--teal-gray);
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #001524 0%, #0a2c3d 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 大标题增强效果 */
+        .title-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.2;
+        }
+        
+        .title-decoration::before,
+        .title-decoration::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--orange);
+            filter: blur(60px);
+        }
+        
+        .title-decoration::before {
+            top: -50px;
+            left: 20%;
+        }
+        
+        .title-decoration::after {
+            bottom: -50px;
+            right: 20%;
+        }
+        
+        /* 描述文本左对齐 */
+        .description {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            background: rgba(21, 97, 109, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: left; /* 左对齐 */
+        }
+        
+        .description p {
+            margin-bottom: 15px;
+        }
+        
+        .visualization-section {
+            background: linear-gradient(145deg, rgba(21, 97, 109, 0.15) 0%, rgba(0, 21, 36, 0.3) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border-left: 5px solid var(--orange);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .visualization-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* 图表容器居中 */
+        .chart-container {
+            width: 100%;
+            height: 600px;
+            margin: 20px auto;
+            background-color: rgba(0, 21, 36, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 236, 209, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex; /* 新增居中布局 */
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .chart-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .chart-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: var(--orange);
+            display: flex;
+            align-items: center;
+            background: rgba(0, 21, 36, 0.8);
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chart-loading::before {
+            content: "";
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 3px solid rgba(255, 125, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--orange);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(21, 97, 109, 0.25);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding: 8px 15px;
+            background: rgba(0, 21, 36, 0.5);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .legend-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 125, 0, 0.2);
+        }
+        
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            margin-right: 8px;
+            border: 1px solid var(--cream);
+            border-radius: 5px;
+        }
+        
+        .sunburst-info {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1rem;
+            color: var(--cream);
+            padding: 15px;
+            background: rgba(21, 97, 109, 0.25);
+            border-radius: 10px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 22px;
+            margin-top: 60px;
+            border-top: 1.5px solid var(--teal-gray);
+            font-size: 1rem;
+            color: rgba(255, 236, 209, 0.7);
+        }
+        
+        a {
+            color: var(--orange);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+            color: #ff9a40;
+            text-shadow: 0 0 8px rgba(255, 125, 0, 0.5);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--orange), transparent);
+        }
+        
+        .highlight {
+            color: var(--orange);
+            font-weight: 700;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: rgba(21, 97, 109, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 3px solid var(--orange);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card i {
+            font-size: 2rem;
+            color: var(--orange);
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: clamp(2rem, 6vw, 3rem);
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .description {
+                font-size: 1rem;
+            }
+            
+            .chart-container {
+                height: 500px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title::before,
+            .section-title::after {
+                flex: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title-decoration"></div>
+            <!-- 使用Tailwind的text-6xl类设置字体大小，并添加自定义类 -->
+        <h1 class="header-title text-[clamp(1rem,4vw,3rem)] font-bold text-orange-500 text-shadow relative z-20 px-4 tracking-tight">
+    高校针灸专业评级可视化系统
+</h1>
+            <p class="description">
+                “高校育针灸” 一图呈现了全国27所开设有针灸推拿学专业的中医药院校学科评估等级占比，展现出在针灸传承的版图上，各个地域都在书写着属于自己的故事。
+            </p>
+        </header>
+        
+        <!-- 特色功能展示 -->
+        <section class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-sun"></i>
+                <h3>交互式旭日图</h3>
+                <p>通过层级结构展示不同评级高校分布，点击不同区域可聚焦详细信息</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-bar"></i>
+                <h3>综合评分条形图</h3>
+                <p>直观展示各高校针灸专业评分对比，清晰了解各校专业实力差距</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>专业数据支持</h3>
+                <p>基于最新高校专业评估数据，涵盖27所开设针灸专业的高校</p>
+            </div>
+        </section>
+        
+        <!-- 旭日图部分 -->
+        <section class="visualization-section">
+            <h2 class="section-title">针灸推拿学高校评级分布</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(to right, #15616d, #ff7d00, #78290f); width: 100px;"></div>
+                    <span>总分区间(20 → 60)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff7d00;"></div>
+                    <span>A+级高校</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e76f51;"></div>
+                    <span>A级高校</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #b85620;"></div>
+                    <span>B+级高校</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #78290f;"></div>
+                    <span>B级高校</span>
+                </div>
+            </div>
+            <div id="sunburst-chart" class="chart-container">
+                <div class="chart-wrapper">
+                    <div class="chart-loading">图表加载中...</div>
+                </div>
+            </div>
+            <div class="sunburst-info">
+                <p><span class="highlight">A+级</span>: 上海中医药大学(59.2) 北京中医药大学(58.4) | <span class="highlight">A级</span>: 成都中医药大学(55.4) 广州中医药大学(54.4) 南京中医药大学(51.6)</p>
+            </div>
+            <div class="description">
+                <p>本交互式旭日图展示了国内针灸推拿学专业高校的评级分布情况。数据来源于最新的专业评估报告，综合考量了教学资源、科研实力、师资力量等多方面因素。</p>
+                <p>图表以颜色深浅表示总分高低，从蓝色(低)到橙色(中)再到棕色(高)。A+级高校处于最外环，展现了其在专业领域的领先地位。</p>
+                <p>您可以通过点击图表的不同区域进行交互：点击中心圆可查看所有高校，点击评级环可查看该评级下的所有高校，点击高校名称可聚焦该高校。</p>
+            </div>
+        </section>
+        
+        <!-- 条形图部分 -->
+        <section class="visualization-section">
+            <h2 class="section-title">高校针灸专业综合评分对比</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--orange);"></div>
+                    <span>A+级高校</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e76f51;"></div>
+                    <span>A级高校</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #b85620;"></div>
+                    <span>B+级高校</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #78290f;"></div>
+                    <span>B级高校</span>
+                </div>
+            </div>
+            <div id="bar-chart" class="chart-container">
+                <div class="chart-wrapper">
+                    <div class="chart-loading">图表加载中...</div>
+                </div>
+            </div>
+            <div class="description">
+                <p>本交互式条形图直观展示了各高校针灸专业的综合评分对比。通过对比可以清晰地看到不同评级高校之间的分数差距。</p>
+                <p>图表中，A+级高校以鲜明的橙色显示，A级为浅橙色，B+级为棕色，B级为深棕色。这种颜色编码与旭日图保持一致，便于用户形成统一的视觉认知。</p>
+            </div>
+        </section>
+        
+        <footer>
+            <p>数据来源：软科 </p>
+            <p>针行千年 | <a href="数据新闻大赛网页.html#高校" style="color:  #ff7d00;">返回主站</a></p>
+        </footer>
+    </div>
+
+    <!-- 引入Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script>
+        // 定义配色方案
+        const DARK_BLUE = "#001524";
+        const TEAL = "#15616d";
+        const CREAM = "#ffecd1";
+        const ORANGE = "#ff7d00";
+        const DARK_BROWN = "#78290f";
+        
+        // 高校数据
+        const universityData = {
+            '评级': ['A+', 'A+', 'A', 'A', 'A', 'B+', 'B+', 'B+', 'B+', 'B+', 'B+', 'B+', 'B+', 'B+', 'B+', 'B+', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
+            '高校名称': [
+                '上海中医药大学', '北京中医药大学', '成都中医药大学', '广州中医药大学', '南京中医药大学',
+                '天津中医药大学', '浙江中医药大学', '湖南中医药大学', '山东中医药大学', '长春中医药大学',
+                '黑龙江中医药大学', '湖北中医药大学', '河南中医药大学', '南方医科大学', '安徽中医药大学',
+                '福建中医药大学', '江西中医药大学', '贵州中医药大学', '广西中医药大学', '辽宁中医药大学',
+                '山西中医药大学', '陕西中医药大学', '宁夏医科大学', '河北中医药大学', '大连医科大学',
+                '甘肃中医药大学', '云南中医药大学'
+            ],
+            '总分': [
+                59.2, 58.4, 55.4, 54.4, 51.6, 50.7, 49.5, 44.6, 42.1, 41.7,
+                40.1, 39.6, 39.4, 39.4, 38.5, 38.5, 35.6, 33.0, 32.7, 32.4,
+                31.6, 31.3, 31.2, 29.8, 28.0, 26.9, 26.9
+            ]
+        };
+        
+        // 颜色映射
+        const colorMap = {
+            'A+': ORANGE,
+            'A': '#e76f51',
+            'B+': '#b85620',
+            'B': DARK_BROWN
+        };
+        
+        // 检查Plotly是否加载成功
+        function checkPlotlyLoaded() {
+            if (typeof Plotly === 'undefined') {
+
+                console.error('Plotly.js未加载成功，请检查文件路径是否正确');
+                const containers = document.querySelectorAll('.chart-loading');
+                containers.forEach(container => {
+                    container.innerHTML = "图表加载失败，Plotly.js未找到";
+                });
+                return false;
+            }
+            return true;
+        }
+        
+        // 创建旭日图
+        function createSunburstChart() {
+            if (!checkPlotlyLoaded()) return;
+            
+            // 移除加载提示
+            document.querySelector('#sunburst-chart .chart-loading').remove();
+            
+            // 创建旭日图数据
+            const data = [{
+                type: "sunburst",
+                ids: [],
+                labels: [],
+                parents: [],
+                values: [],
+                branchvalues: "total",
+                marker: {
+                    colors: [],
+                    line: {
+                        color: DARK_BLUE,
+                        width: 1
+                    }
+                },
+                textfont: {
+                    family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                    size: 14,
+                    color: CREAM
+                },
+                hoverlabel: {
+                    bgcolor: DARK_BLUE,
+                    bordercolor: ORANGE,
+                    font: {
+                        family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                        size: 14,
+                        color: CREAM
+                    }
+                },
+                hovertemplate: '<b>%{label}</b><br>总分: %{value:.1f}<br>占比: %{percentParent:.1%}<extra></extra>',
+                textinfo: 'label+percent parent',
+                textposition: 'inside',
+                insidetextorientation: 'radial'
+            }];
+            
+            // 添加根节点
+            data[0].ids.push("高校");
+            data[0].labels.push("高校");
+            data[0].parents.push("");
+            data[0].values.push(universityData['总分'].reduce((a, b) => a + b, 0));
+            data[0].marker.colors.push(TEAL);
+            
+            // 添加评级节点
+            const ratingNodes = {};
+            const uniqueRatings = [...new Set(universityData['评级'])];
+            
+            uniqueRatings.forEach(rating => {
+                const ratingId = `rating_${rating}`;
+                const ratingScore = universityData['总分'].filter((_, i) => universityData['评级'][i] === rating).reduce((a, b) => a + b, 0);
+                
+                data[0].ids.push(ratingId);
+                data[0].labels.push(rating);
+                data[0].parents.push("高校");
+                data[0].values.push(ratingScore);
+                data[0].marker.colors.push(colorMap[rating]);
+                
+                ratingNodes[rating] = ratingId;
+            });
+            
+            // 添加高校节点
+            universityData['高校名称'].forEach((name, i) => {
+                const rating = universityData['评级'][i];
+                const score = universityData['总分'][i];
+                
+                data[0].ids.push(name);
+                data[0].labels.push(name);
+                data[0].parents.push(ratingNodes[rating]);
+                data[0].values.push(score);
+                
+                // 基于分数计算颜色（归一化到20-60范围）
+                const normalized = (score - 20) / (60 - 20);
+                let r, g, b;
+                
+                if (normalized < 0.5) {
+                    // 从蓝色到橙色
+                    r = Math.floor(21 + (255 - 21) * normalized * 2);
+                    g = Math.floor(97 + (125 - 97) * normalized * 2);
+                    b = Math.floor(109 + (0 - 109) * normalized * 2);
+                } else {
+                    // 从橙色到棕色
+                    r = Math.floor(255 + (120 - 255) * (normalized - 0.5) * 2);
+                    g = Math.floor(125 + (40 - 125) * (normalized - 0.5) * 2);
+                    b = Math.floor(0 + (15 - 0) * (normalized - 0.5) * 2);
+                }
+                
+
+                data[0].marker.colors.push(`rgb(${r}, ${g}, ${b})`);
+            });
+            
+            const layout = {
+                title: {
+                    text: "<b>针灸推拿学高校评级分布</b><br><sup>基于综合评分数据的交互式旭日图</sup>",
+                    font: {
+                        size: 22,
+                        family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                        color: ORANGE
+                    },
+                    y: 0.95,
+                    x: 0.5,
+                    xanchor: 'center',
+                    yanchor: 'top'
+                },
+                font: {
+                    size: 12,
+                    family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                    color: CREAM
+                },
+                height: 600,
+                margin: {
+                    t: 100,
+                    l: 0,
+                    r: 0,
+                    b: 50
+                },
+                paper_bgcolor: DARK_BLUE,
+                plot_bgcolor: DARK_BLUE
+            };
+            
+            // 创建图表
+            Plotly.newPlot('sunburst-chart', data, layout, {responsive: true});
+        }
+
+        // 创建条形图
+        function createBarChart() {
+            if (!checkPlotlyLoaded()) return;
+            
+            // 移除加载提示
+            document.querySelector('#bar-chart .chart-loading').remove();
+            
+            // 准备数据 - 按分数降序排序
+            const sortedIndices = [...universityData['总分'].keys()]
+                .sort((a, b) => universityData['总分'][b] - universityData['总分'][a]);
+            
+            const sortedNames = sortedIndices.map(i => universityData['高校名称'][i]);
+            const sortedScores = sortedIndices.map(i => universityData['总分'][i]);
+            const sortedRatings = sortedIndices.map(i => universityData['评级'][i]);
+            
+            const trace = {
+                type: 'bar',
+                orientation: 'v',
+                x: sortedNames,
+                y: sortedScores,
+                marker: {
+                    color: sortedRatings.map(rating => colorMap[rating]),
+                    line: {
+                        color: CREAM,
+                        width: 1
+                    }
+                },
+                text: sortedScores.map(score => score.toFixed(1)),
+                textposition: 'outside',
+                hoverinfo: 'text',
+                hovertext: sortedNames.map((name, i) => 
+                    `<b>${name}</b><br>总分: ${sortedScores[i].toFixed(1)}<br>评级: ${sortedRatings[i]}`
+                ),
+                textfont: {
+                    family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                    size: 12,
+                    color: CREAM
+                }
+            };
+            
+            const layout = {
+                title: {
+                    text: "<b>高校针灸专业综合评分对比</b>",
+                    font: {
+                        size: 22,
+                        family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                        color: ORANGE
+                    },
+                    y: 0.95,
+                    x: 0.5,
+                    xanchor: 'center',
+                    yanchor: 'top'
+                },
+                font: {
+                    size: 12,
+                    family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                    color: CREAM
+                },
+                height: 600,
+                xaxis: {
+                    tickangle: -45,
+                    tickfont: {
+                        size: 10,
+                        color: CREAM
+                    },
+                    title: {
+                        text: "高校名称",
+                        font: {
+                            size: 14,
+                            color: CREAM
+                        }
+                    },
+                    showgrid: false,
+                    linecolor: CREAM,
+                    gridcolor: 'rgba(255, 236, 209, 0.1)'
+                },
+                yaxis: {
+                    range: [0, 70],
+                    title: {
+                        text: "综合评分",
+                        font: {
+                            size: 14,
+                            color: CREAM
+                        }
+                    },
+                    gridcolor: 'rgba(255, 236, 209, 0.1)',
+                    linecolor: CREAM,
+                    tickfont: {
+                        color: CREAM
+                    }
+                },
+                paper_bgcolor: DARK_BLUE,
+                plot_bgcolor: DARK_BLUE,
+                margin: {
+                    t: 100,
+                    l: 80,
+                    r: 50,
+                    b: 180
+                },
+                hoverlabel: {
+                    bgcolor: DARK_BLUE,
+                    bordercolor: ORANGE,
+                    font: {
+                        family: "Microsoft YaHei, Noto Sans SC, sans-serif",
+                        size: 14,
+                        color: CREAM
+                    }
+                }
+            };
+            
+            // 创建图表
+            Plotly.newPlot('bar-chart', [trace], layout, {responsive: true});
+        }
+
+        // 页面加载完成后创建图表
+        document.addEventListener("DOMContentLoaded", function() {
+            // 添加错误处理
+            try {
+                // 先检查Plotly是否加载
+                if (checkPlotlyLoaded()) {
+                    // 顺序创建图表
+                    setTimeout(() => {
+                        createSunburstChart();
+                        setTimeout(createBarChart, 500);
+                    }, 500);
+                }
+            } catch (error) {
+                console.error("图表加载错误:", error);
+                // 显示错误信息给用户
+                const containers = document.querySelectorAll('.chart-loading');
+                containers.forEach(container => {
+                    container.innerHTML = "图表加载失败: " + error.message;
+                });
+            }
+            
+            // 添加响应式调整
+            window.addEventListener('resize', function() {
+                try {
+                    if (typeof Plotly !== 'undefined') {
+                        Plotly.Plots.resize('sunburst-chart');
+                        Plotly.Plots.resize('bar-chart');
+                    }
+                } catch (error) {
+                    console.error("调整图表大小错误:", error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经穴藏象·症随脉走</title>
+    <!-- 引入Plotly.js库 -->
+    <script src="plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --deep-blue: #001524;
+            --teal-gray: #15616d;
+            --cream: #ffecd1;
+            --orange: #ff7d00;
+            --brown: #78290f;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--cream);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--teal-gray);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--orange);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--orange);
+            font-size: 1.8rem;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--teal-gray);
+        }
+        
+        .description {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .visualization-section {
+            background-color: rgba(21, 97, 109, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 40px;
+            border-left: 4px solid var(--orange);
+            overflow: hidden;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 900px;
+            margin: 20px auto;
+            background-color: var(--deep-blue);
+            overflow: auto;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(21, 97, 109, 0.2);
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border: 1px solid var(--cream);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            border-top: 1px solid var(--teal-gray);
+            font-size: 0.9rem;
+            color: rgba(255, 236, 209, 0.7);
+        }
+        
+        a {
+            color: var(--orange);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .description {
+                font-size: 1rem;
+            }
+            
+            .chart-container {
+                height: 700px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>经穴藏象·症随脉走</h1>
+           <p style="text-align: justify; text-justify: inter-ideograph; width: 850px; margin: 20px auto; line-height: 1.6;">
+        十四经脉作为中医经络系统的核心框架，承载着 “经脉所过，主治所及” 的理论精髓，是理解针灸疗效的关键所在。
+    </p>
+        </header>
+        
+        <!-- 桑基图部分 -->
+        <section class="visualization-section">
+            <h2>十四经腧穴主治病症关联图</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--orange);"></div>
+                    <span>手三阴经</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e76f51;"></div>
+                    <span>手三阳经</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #b85620;"></div>
+                    <span>足三阳经</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--teal-gray);"></div>
+                    <span>足三阴经</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--brown);"></div>
+                    <span>任督二脉</span>
+                </div>
+            </div>
+            <div id="sankey-chart" class="chart-container"></div>
+        </section>
+        
+        <!-- 热力图部分 -->
+        <section class="visualization-section">
+            <h2>经络穴位人体分布热力图</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(to right, #15616d, #ff7d00, #78290f); width: 100px;"></div>
+                    <span>穴位数量(少 → 多)</span>
+                </div>
+            </div>
+            <div id="heatmap-chart" class="chart-container"></div>
+        </section>
+        
+        <footer>
+            <p>数据来源：世界卫生组织标准针灸经穴定位 </p>
+            <p>针行千年 | <a href="数据新闻大赛网页.html#十四经脉">返回主站</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // 定义配色方案
+        const DARK_BLUE = "#001524";
+        const TEAL = "#15616d";
+        const CREAM = "#ffecd1";
+        const ORANGE = "#ff7d00";
+        const DARK_BROWN = "#78290f";
+        
+        // 桑基图数据
+        const meridianData = [
+            {"经络": "手太阴肺经", "穴位": 11, "本经病": "肺，喉病", "二经病": "", "三经病": "胸部病"},
+            {"经络": "手厥阴心包经", "穴位": 9, "本经病": "心，胃病", "二经病": "神志病", "三经病": "胸部病"},
+            {"经络": "手少阴心经", "穴位": 9, "本经病": "心病", "二经病": "神志病", "三经病": "胸部病"},
+            {"经络": "手阳明大肠经", "穴位": 20, "本经病": "前头、鼻、口、齿病", "二经病": "", "三经病": "眼病、咽喉病、热病"},
+            {"经络": "手少阳三焦经", "穴位": 23, "本经病": "侧头、胁、肋病", "二经病": "耳病", "三经病": "眼病、咽喉病、热病"},
+            {"经络": "手太阳小肠经", "穴位": 19, "本经病": "后头、肩胛病、神志病", "二经病": "耳病", "三经病": "眼病、咽喉病、热病"},
+            {"经络": "足阳明胃经", "穴位": 45, "本经病": "前头、口齿、咽喉病、胃肠病", "二经病": "", "三经病": "神志病、热病"},
+            {"经络": "足少阳胆经", "穴位": 44, "本经病": "侧头、耳病、胁肋病", "二经病": "眼病", "三经病": "神志病、热病"},
+            {"经络": "足太阳膀胱经", "穴位": 67, "本经病": "后头，背腰病、脏腑病", "二经病": "眼病", "三经病": "神志病、热病"},
+            {"经络": "足太阴脾经", "穴位": 21, "本经病": "脾胃病", "二经病": "", "三经病": "前阴病、妇科病"},
+            {"经络": "足少阴肾经", "穴位": 27, "本经病": "肾病、肺病、咽喉病", "二经病": "", "三经病": "前阴病、妇科病"},
+            {"经络": "足厥阴肝经", "穴位": 14, "本经病": "肝病", "二经病": "", "三经病": "前阴病、妇科病"},
+            {"经络": "督脉", "穴位": 28, "本经病": "回阳，固脱、强壮作用", "二经病": "神志病、脏腑病、妇科病", "三经病": ""},
+            {"经络": "任脉", "穴位": 24, "本经病": "中风、昏迷、热病、头面病", "二经病": "神志病、脏腑病、妇科病", "三经病": ""}
+        ];
+        
+        // 热力图数据
+        const heatmapData = {
+            z: [
+                [15, 20, 5, 8, 12, 0, 0, 0],
+                [8, 12, 6, 10, 15, 0, 0, 0],
+                [5, 15, 10, 7, 8, 0, 0, 0],
+                [0, 0, 0, 0, 0, 25, 18, 5],
+                [0, 0, 0, 0, 0, 15, 22, 8],
+                [10, 5, 12, 8, 6, 0, 0, 0],
+                [0, 0, 0, 0, 0, 20, 25, 10],
+                [3, 7, 10, 12, 8, 0, 0, 0]
+            ],
+            x: ['头面部', '颈部', '胸部', '腹部', '腰背部', '上肢', '下肢', '会阴部'],
+            y: [
+                '手太阴肺经', '手阳明大肠经', '足阳明胃经', 
+                '足太阴脾经', '手少阴心经', '手太阳小肠经',
+                '足太阳膀胱经', '手厥阴心包经'
+            ]
+        };
+
+        // 颜色调整函数
+        function adjustColor(hexColor, brightness = 1.0, saturation = 1.0) {
+            // 转换为RGB
+            let r = parseInt(hexColor.slice(1, 3), 16) / 255;
+            let g = parseInt(hexColor.slice(3, 5), 16) / 255;
+            let b = parseInt(hexColor.slice(5, 7), 16) / 255;
+            
+            // 转换为HSV
+            let max = Math.max(r, g, b);
+            let min = Math.min(r, g, b);
+            let h, s, v = max;
+            
+            let d = max - min;
+            s = max === 0 ? 0 : d / max;
+            
+            if (max === min) {
+                h = 0;
+            } else {
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            
+            // 调整饱和度和亮度
+            s = Math.min(1.0, s * saturation);
+            v = Math.min(1.0, v * brightness);
+            
+            // 转换回RGB
+            let i = Math.floor(h * 6);
+            let f = h * 6 - i;
+            let p = v * (1 - s);
+            let q = v * (1 - f * s);
+            let t = v * (1 - (1 - f) * s);
+            
+            switch (i % 6) {
+                case 0: r = v; g = t; b = p; break;
+                case 1: r = q; g = v; b = p; break;
+                case 2: r = p; g = v; b = t; break;
+                case 3: r = p; g = q; b = v; break;
+                case 4: r = t; g = p; b = v; break;
+                case 5: r = v; g = p; b = q; break;
+            }
+            
+            return `#${Math.round(r * 255).toString(16).padStart(2, '0')}${Math.round(g * 255).toString(16).padStart(2, '0')}${Math.round(b * 255).toString(16).padStart(2, '0')}`;
+        }
+
+        // 创建桑基图
+        function createSankeyChart() {
+            // 构建节点和链接数据
+            let allNodes = [];
+            let source = [];
+            let target = [];
+            let value = [];
+            let nodeColors = [];
+            let nodeIndexMap = {};
+            let currentIndex = 0;
+            
+            // 第一层节点：经络分类
+            const categories = ["手三阴经", "手三阳经", "足三阳经", "足三阴经", "任督二脉"];
+            allNodes = allNodes.concat(categories);
+            nodeColors = nodeColors.concat([
+                ORANGE,       // 手三阴经
+                "#e76f51",    // 手三阳经
+                "#b85620",    // 足三阳经
+                TEAL,         // 足三阴经
+                DARK_BROWN    // 任督二脉
+            ]);
+            currentIndex = categories.length;
+            
+            // 添加经络节点并建立分类链接
+            meridianData.forEach(meridian => {
+                // 确定经络分类
+                let category, baseColor;
+                if (meridian["经络"].includes("手太阴") || meridian["经络"].includes("手厥阴") || meridian["经络"].includes("手少阴")) {
+                    category = "手三阴经";
+                    baseColor = ORANGE;
+                } else if (meridian["经络"].includes("手阳明") || meridian["经络"].includes("手少阳") || meridian["经络"].includes("手太阳")) {
+                    category = "手三阳经";
+                    baseColor = "#e76f51";
+                } else if (meridian["经络"].includes("足阳明") || meridian["经络"].includes("足少阳") || meridian["经络"].includes("足太阳")) {
+                    category = "足三阳经";
+                    baseColor = "#b85620";
+                } else if (meridian["经络"].includes("足太阴") || meridian["经络"].includes("足少阴") || meridian["经络"].includes("足厥阴")) {
+                    category = "足三阴经";
+                    baseColor = TEAL;
+                } else {
+                    category = "任督二脉";
+                    baseColor = DARK_BROWN;
+                }
+                
+                // 添加经络节点
+                const meridianName = meridian["经络"];
+                allNodes.push(meridianName);
+                
+                // 为每条经络创建独特但相关的颜色
+                const meridianColor = adjustColor(baseColor, 0.9 + (currentIndex % 5) * 0.05, 0.8 + (currentIndex % 3) * 0.1);
+                nodeColors.push(meridianColor);
+                nodeIndexMap[meridianName] = currentIndex;
+                
+                // 建立分类->经络的链接
+                source.push(categories.indexOf(category));
+                target.push(currentIndex);
+                value.push(meridian["穴位"]);  // 用穴位数量表示关联强度
+                currentIndex++;
+            });
+            
+            // 添加病症节点并建立链接
+            const diseasePalette = [
+                "#ffecd1", "#f9d8b8", "#f2c49f", "#ecb187", 
+                "#e69d6f", "#d98a56", "#c2763e", "#ab6227"
+            ];
+            
+            meridianData.forEach(meridian => {
+                const meridianIdx = nodeIndexMap[meridian["经络"]];
+                
+                // 处理三类病症
+                ["本经病", "二经病", "三经病"].forEach((diseaseType, i) => {
+                    let diseases = meridian[diseaseType];
+                    if (!diseases) return;
+                    
+                    // 分割病症
+                    const diseaseList = diseases.replace(/[、， ]/g, ",").split(",");
+                    
+                    diseaseList.forEach((disease, j) => {
+                        if (!disease) return;
+                        
+                        // 统一病症名称格式
+                        disease = disease.trim();
+                        if (!disease.endsWith("病") && !["回阳", "固脱", "强壮作用"].includes(disease)) {
+                            disease += "病";
+                        }
+                        
+                        // 添加病症节点（如果不存在）
+                        if (!nodeIndexMap.hasOwnProperty(disease)) {
+                            allNodes.push(disease);
+                            
+                            // 为病症分配颜色（循环使用调色板）
+                            const colorIdx = Object.keys(nodeIndexMap).length % diseasePalette.length;
+                            const diseaseColor = diseasePalette[colorIdx];
+                            nodeColors.push(diseaseColor);
+                            
+                            nodeIndexMap[disease] = currentIndex;
+                            currentIndex++;
+                        }
+                        
+                        // 建立经络->病症的链接
+                        const diseaseIdx = nodeIndexMap[disease];
+                        source.push(meridianIdx);
+                        target.push(diseaseIdx);
+                        value.push(5 - i);  // 本经病权重5，二经病4，三经病3
+                    });
+                });
+            });
+            
+            // 创建桑基图数据
+            const sankeyData = {
+                type: "sankey",
+                orientation: "h",
+                node: {
+                    label: allNodes,
+                    color: nodeColors,
+                    pad: 50,
+                    thickness: 20,
+                    line: {
+                        color: CREAM,
+                        width: 0.8
+                    },
+                    hovertemplate: '<b>%{label}</b><br>关联数: %{value}<extra></extra>'
+                },
+                link: {
+                    source: source,
+                    target: target,
+                    value: value,
+                    color: source.map(s => {
+                        const col = nodeColors[s];
+                        return `rgba(${parseInt(col.slice(1, 3), 16)}, ${parseInt(col.slice(3, 5), 16)}, ${parseInt(col.slice(5, 7), 16)}, 0.6)`;
+                    }),
+                    line: {
+                        width: 0.3,
+                        color: "rgba(200, 200, 200, 0.4)"
+                    },
+                    hovertemplate: "<b>源头:</b> %{source.label}<br><b>目标:</b> %{target.label}<br><b>关联强度:</b> %{value}<extra></extra>"
+                }
+            };
+            
+            const layout = {
+                title: {
+                    text: "<b>十四经腧穴主治病症关联图</b>",
+                    font: {
+                        size: 22,
+                        family: "SimHei",
+                        color: CREAM
+                    }
+                },
+                font: {
+                    size: 12,
+                    family: "SimHei",
+                    color: CREAM
+                },
+                height: 900,
+                width: 1200,
+                margin: {
+                    t: 100,
+                    l: 150,
+                    r: 50,
+                    b: 150
+                },
+                paper_bgcolor: DARK_BLUE,
+                plot_bgcolor: DARK_BLUE
+            };
+            
+            Plotly.newPlot('sankey-chart', [sankeyData], layout);
+        }
+
+        // 创建热力图
+        function createHeatmapChart() {
+            // 准备文本数据（只显示非零值）
+            const textData = heatmapData.z.map(row => 
+                row.map(val => val > 0 ? val.toString() : '')
+            );
+
+            const data = [{
+                type: 'heatmap',
+                z: heatmapData.z,
+                x: heatmapData.x,
+                y: heatmapData.y,
+                text: textData,
+                hoverinfo: 'x+y+z',
+                hovertemplate: `
+                    <b>经络</b>: %{y}<br>
+                    <b>部位</b>: %{x}<br>
+                    <b>穴位数</b>: %{z}
+                    <extra></extra>
+                `,
+                colorscale: [
+                    [0, TEAL],
+                    [0.5, ORANGE],
+                    [1, DARK_BROWN]
+                ],
+                showscale: true,
+                hoverongaps: false,
+                texttemplate: '%{text}',
+                textfont: {
+                    family: 'Noto Sans SC',
+                    size: 12,
+                    color: CREAM,
+                    weight: 'bold'
+                },
+                xgap: 1,
+                ygap: 1
+            }];
+            
+            const layout = {
+                title: {
+                    text: "<b>经络穴位人体分布热力图</b>",
+                    font: {
+                        size: 22,
+                        family: "SimHei",
+                        color: CREAM
+                    }
+                },
+                xaxis: {
+                    tickangle: -45,
+                    tickfont: {
+                        color: CREAM,
+                        size: 12,
+                        family: "SimHei"
+                    },
+                    title: {
+                        text: "人体部位",
+                        font: {
+                            color: CREAM,
+                            size: 14,
+                            family: "SimHei"
+                        }
+                    },
+                    showgrid: true,
+                    gridcolor: 'rgba(255, 236, 209, 0.2)',
+                    linecolor: CREAM
+                },
+                yaxis: {
+                    tickfont: {
+                        color: CREAM,
+                        size: 12,
+                        family: "SimHei"
+                    },
+                    title: {
+                        text: "经络名称",
+                        font: {
+                            color: CREAM,
+                            size: 14,
+                            family: "SimHei"
+                        }
+                    },
+                    showgrid: true,
+                    gridcolor: 'rgba(255, 236, 209, 0.2)',
+                    linecolor: CREAM
+                },
+                paper_bgcolor: DARK_BLUE,
+                plot_bgcolor: DARK_BLUE,
+                margin: {
+                    t: 100,
+                    l: 200,
+                    r: 50,
+                    b: 150
+                },
+                colorbar: {
+                    title: {
+                        text: "穴位数量(个)",
+                        font: {
+                            color: CREAM,
+                            size: 12,
+                            family: "SimHei"
+                        }
+                    },
+                    tickfont: {
+                        color: CREAM,
+                        family: "SimHei"
+                    }
+                }
+            };
+            
+            // 添加自定义网格线
+            const shapes = [];
+            // 水平网格线
+            for (let i = 0; i < heatmapData.y.length - 1; i++) {
+                shapes.push({
+                    type: 'line',
+                    x0: -0.5,
+                    y0: i + 0.5,
+                    x1: heatmapData.x.length - 0.5,
+                    y1: i + 0.5,
+                    line: {
+                        color: 'rgba(255, 236, 209, 0.3)',
+                        width: 1,
+                        dash: 'dot'
+                    }
+                });
+            }
+            // 垂直网格线
+            for (let i = 0; i < heatmapData.x.length - 1; i++) {
+                shapes.push({
+                    type: 'line',
+                    x0: i + 0.5,
+                    y0: -0.5,
+                    x1: i + 0.5,
+                    y1: heatmapData.y.length - 0.5,
+                    line: {
+                        color: 'rgba(255, 236, 209, 0.3)',
+                        width: 1,
+                        dash: 'dot'
+                    }
+                });
+            }
+            layout.shapes = shapes;
+            
+            Plotly.newPlot('heatmap-chart', data, layout);
+        }
+
+        // 页面加载完成后创建图表
+        document.addEventListener("DOMContentLoaded", function() {
+            createSankeyChart();
+            createHeatmapChart();
+            
+            // 响应式调整
+            window.addEventListener('resize', function() {
+                Plotly.Plots.resize('sankey-chart');
+                Plotly.Plots.resize('heatmap-chart');
+            });
+        });
+    </script>
+</body>
+</html>
+

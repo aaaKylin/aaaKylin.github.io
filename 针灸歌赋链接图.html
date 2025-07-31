@@ -1,0 +1,620 @@
+        <!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>歌赋咏针灸</title>
+            <!-- 引入Plotly.js库 -->
+            <script src="plotly-latest.min.js"></script>
+            <style>
+                :root {
+                    --deep-blue: #001524;
+                    --teal-gray: #15616d;
+                    --cream: #ffecd1;
+                    --orange: #ff7d00;
+                    --brown: #78290f;
+                }
+                
+                body {
+                    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+                    background-color: var(--deep-blue);
+                    color: var(--cream);
+                    margin: 0;
+                    padding: 0;
+                    line-height: 1.6;
+                }
+                
+                .container {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                
+                header {
+                    text-align: center;
+                    padding: 20px 0;
+                    border-bottom: 1px solid var(--teal-gray);
+                    margin-bottom: 30px;
+                }
+                
+                h1 {
+                    color: var(--orange);
+                    font-size: 2.2rem;
+                    margin-bottom: 10px;
+                }
+                
+                h2 {
+                    color: var(--orange);
+                    font-size: 1.8rem;
+                    margin: 30px 0 15px;
+                    padding-bottom: 10px;
+                    border-bottom: 2px solid var(--teal-gray);
+                }
+                
+                .description {
+                    max-width: 800px;
+                    margin: 0 auto 30px;
+                    font-size: 1.1rem;
+                    line-height: 1.8;
+                }
+                
+                .visualization-section {
+                    background-color: rgba(21, 97, 109, 0.1);
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin-bottom: 40px;
+                    border-left: 4px solid var(--orange);
+                    overflow: hidden;
+                }
+                
+                .chart-container {
+                    width: 100%;
+                    height: 900px;
+                    margin: 20px auto;
+                    background-color: var(--deep-blue);
+                    overflow: auto;
+                }
+                
+                .legend {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    margin: 20px 0;
+                    padding: 15px;
+                    background-color: rgba(21, 97, 109, 0.2);
+                    border-radius: 8px;
+                }
+                
+                .legend-item {
+                    display: flex;
+                    align-items: center;
+                    margin: 5px 0;
+                }
+                
+                .legend-color {
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 8px;
+                    border: 1px solid var(--cream);
+                }
+                
+                footer {
+                    text-align: center;
+                    padding: 20px;
+                    margin-top: 50px;
+                    border-top: 1px solid var(--teal-gray);
+                    font-size: 0.9rem;
+                    color: rgba(255, 236, 209, 0.7);
+                }
+                
+                a {
+                    color: var(--orange);
+                    text-decoration: none;
+                }
+                
+                a:hover {
+                    text-decoration: underline;
+                }
+                
+                @media (max-width: 768px) {
+                    h1 {
+                        font-size: 1.8rem;
+                    }
+                    
+                    h2 {
+                        font-size: 1.5rem;
+                    }
+                    
+                    .description {
+                        font-size: 1rem;
+                    }
+                    
+                    .chart-container {
+                        height: 700px;
+                    }
+                    
+                    .legend {
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                }
+                
+                /* 新增图片容器样式 */
+                .image-container {
+                    width: 100%;
+                    height: 900px;
+                    margin: 20px auto;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    position: relative;
+                }
+                
+                .image-container img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                    transition: transform 0.3s ease;
+                }
+                
+                .image-container:hover img {
+                    transform: scale(1.02);
+                }
+                
+                .image-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(rgba(0, 21, 36, 0.1), rgba(0, 21, 36, 0.3));
+                    pointer-events: none;
+                }
+                
+                /* 歌赋滑块容器 */
+                .poem-slider {
+                    position: relative;
+                    width: 100%;
+                    max-width: 800px;
+                    margin: 20px auto;
+                    overflow: hidden;
+                }
+                
+                .poem-track {
+                    display: flex;
+                    transition: transform 0.5s ease-in-out;
+                }
+                
+                .poem-container {
+                    width: 100%;
+                    max-width: 800px;
+                    min-width: 100%;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    border-radius: 10px;
+                    padding: 30px;
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                    box-sizing: border-box;
+                }
+                
+                .poem-title {
+                    color: var(--orange);
+                    font-size: 1.5rem;
+                    margin-bottom: 15px;
+                    text-align: center;
+                    position: relative;
+                    z-index: 10;
+                }
+                
+                .poem-content {
+                    font-size: 1.2rem;
+                    line-height: 2;
+                    text-align: center;
+                    position: relative;
+                    z-index: 10;
+                }
+                
+                .poem-author {
+                    text-align: right;
+                    margin-top: 20px;
+                    font-size: 1rem;
+                    color: rgba(255, 236, 209, 0.8);
+                    position: relative;
+                    z-index: 10;
+                }
+                
+                .poem-bg {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url("针语/针灸聚英封面.png");
+                    background-size: cover;
+                    background-position: center;
+                    opacity: 0.1;
+                    z-index: 1;
+                }
+                
+                .poem-navigation {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 20px;
+                    position: absolute;
+                    top: 50%;
+                    width: 100%;
+                    transform: translateY(-50%);
+                    z-index: 20;
+                }
+                
+                .poem-btn {
+                    background-color: rgba(255, 125, 0, 0.2);
+                    color: var(--cream);
+                    border: none;
+                    padding: 10px 15px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .poem-btn:hover {
+                    background-color: rgba(255, 125, 0, 0.4);
+                }
+                
+                .poem-dots {
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                    gap: 8px;
+                }
+                
+                .poem-dot {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: rgba(255, 236, 209, 0.3);
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+                
+                .poem-dot.active {
+                    background-color: var(--orange);
+                }
+                
+                /* 新增解释说明样式 */
+                .explanation {
+                    background-color: rgba(21, 97, 109, 0.1);
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin: 20px 0;
+                    border-left: 4px solid var(--teal-gray);
+                }
+                
+                .explanation h3 {
+                    color: var(--orange);
+                    margin-top: 0;
+                }
+                
+                /* 桑基图与图片的组合布局 */
+                .combined-view {
+                    display: flex;
+                    gap: 20px;
+                    margin: 20px 0;
+                }
+                
+                .sankey-container {
+                    flex: 1;
+                    min-width: 50%;
+                    height: 900px;
+                    background-color: var(--deep-blue);
+                    overflow: auto;
+                }
+                
+                .image-side {
+                    flex: 1;
+                    min-width: 50%;
+                    height: 900px;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    position: relative;
+                }
+                
+                .image-side img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                    transition: transform 0.3s ease;
+                }
+                
+                .image-side:hover img {
+                    transform: scale(1.02);
+                }
+                
+                @media (max-width: 1024px) {
+                    .combined-view {
+                        flex-direction: column;
+                    }
+                    
+                    .sankey-container, .image-side {
+                        height: 600px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <h1>针灸歌赋</h1>
+                  <p class="description" style="text-align: justify;">
+    浩如烟海的针灸歌赋是古人为我们留下的又一文化瑰宝。从明代针灸大家高武编撰的《针灸聚英》中提取的 “歌赋咏诵针灸” 一图，便展现了这一独特的传承方式。
+</p>
+                </header>
+                
+                <!-- 针灸歌赋介绍 -->
+                <section class="explanation">
+                    <h3>关于针灸歌赋</h3>
+                    <p>
+                        针灸歌赋是中医针灸学的重要组成部分，以歌诀、韵文形式总结针灸学理论、腧穴定位、刺灸方法及临床经验。
+                        这些歌赋语言简洁、对仗工整、韵律和谐，便于记忆和传诵，是历代针灸医家智慧的结晶。
+                    </p>
+                    <p>
+                        著名的针灸歌赋包括《标幽赋》《通玄指要赋》《百症赋》《玉龙歌》《拦江赋》等，它们不仅是学习针灸的入门阶梯，
+                        也是指导临床实践的重要典籍。通过可视化的方式呈现针灸歌赋，可以帮助学习者更直观地理解和掌握其中的精髓。
+                    </p>
+                </section>
+                
+                <!-- 桑基图与图片部分 -->
+                <section class="visualization-section">
+                    <h2>针灸歌赋图</h2>
+                    <div class="image-container">
+                        <img src="针语/歌赋数据图.jpg" alt="十四经腧穴主治病症关联图" title="点击查看大图">
+                        <div class="image-overlay"></div>
+                    </div>
+                </section>
+                
+                <!-- 针灸歌赋部分 -->
+                <section class="visualization-section">
+                    <h2>经典针灸歌赋赏析</h2>
+                    
+                    <!-- 歌赋滑块 -->
+                    <div class="poem-slider">
+                        <div class="poem-track" id="poemTrack">
+                            <!-- 标幽赋 -->
+                            <div class="poem-container">
+                                <div class="poem-bg"></div>
+                                <div class="poem-title">标幽赋</div>
+                                <div class="poem-content">
+                                    	拯救之法，妙用者针。<br>
+										察岁时于天道，定形气于予心，<br>
+										春夏瘦而刺浅，秋冬肥而刺深，<br>
+										不穷经络阴阳，多逢刺禁；<br>
+										既论脏腑虚实，须向经寻。<br>
+										原夫起自中焦，水初下漏，<br>
+										太阴为始，至厥阴而方终；<br>
+										穴出云门，抵期门而最后。<br>
+										正经十二，别络走三百余支；<br>
+										正侧仰伏，气血有六百余候。<br>
+										手足三阳，手走头而头走足；<br>
+										手足三阴，足走腹而胸走手。<br>
+										要识迎随，须明逆顺。<br>
+                                    ......
+                                </div>
+                                <div class="poem-author">— 窦汉卿（金元时期）</div>
+                            </div>
+                            
+                            <!-- 通玄指要赋 -->
+                            <div class="poem-container">
+                                <div class="poem-bg"></div>
+                                <div class="poem-title">通玄指要赋</div>
+                                <div class="poem-content">
+                                    必欲治病，莫如用针。<br>
+									巧运神机之妙，工开圣理之深。<br>
+									外取砭针，能蠲邪而扶正;<br>
+									中含水火，善回阳而倒阴。<br>
+									原夫络别支殊，经交错综，<br>
+									或沟池溪谷以岐异，或山海丘陵而隙共。<br>
+									斯流派以难揆，在条纲而有统。<br>
+									理繁而昧，纵补泻以何功?<br>
+									法捷而明，曰迎随而得用。<br>
+									且如行步难移，太冲最奇。<br>
+									人中除脊膂之强痛，神门去心性之呆痴。<br>
+									风伤项急，始求于风府;<br>
+									头晕目眩，要觅于风池。<br>
+									耳闭须听会而治也，眼痛则合谷以推之。<br>
+                                    ......
+                                </div>
+                                <div class="poem-author">— 窦汉卿（金元时期）</div>
+                            </div>
+                            
+                            <!-- 百症赋 -->
+                            <div class="poem-container">
+                                <div class="poem-bg"></div>
+                                <div class="poem-title">百症赋</div>
+                                <div class="poem-content">
+                                    百症俞穴，再三用心。<br>
+									囱会连于玉枕，头风疗以金针。<br>
+									悬颅、颔厌之中，偏头痛止；<br>
+									强间、丰隆之际，头痛难禁。<br>
+									原夫面肿虚浮，须仗水沟、前顶；<br>
+									耳聋气闭，全凭听会、翳风。<br>
+									面上虫行有验，迎香可取；<br>
+									耳中蝉噪有声，听会堪攻。<br>
+									目眩兮，支正、飞扬；<br>
+									目黄兮，阳纲、胆俞。<br>
+									攀睛攻少泽、肝俞之所，泪出刺临泣、头维之处。<br>
+                                    ......
+                                </div>
+                                <div class="poem-author">— 作者不详</div>
+                            </div>
+                            
+                            <!-- 玉龙歌 -->
+                            <div class="poem-container">
+                                <div class="poem-bg"></div>
+                                <div class="poem-title">玉龙歌</div>
+                                <div class="poem-content">
+                                    扁鹊授我玉龙歌，玉龙一试绝沉疴，<br>
+									玉龙之歌真罕得，流传千载无差讹。<br>
+									我今歌此玉龙诀，玉龙一百二十穴，<br>
+									医者行针殊妙绝，但恐时人自差别。<br>
+									补泻分明指下施，金针一刺显明医，<br>
+									伛者立伸偻者起，从此名扬天下知。<br>
+									中风不语最难医，发际顶门穴要知，<br>
+									更向百会明补泻，即时苏醒免灾危。<br>
+									鼻流清涕名鼻渊，先泻后补疾可痊，<br>
+									若是头风并眼痛，上星穴内刺无偏。<br>
+                                    ......
+                                </div>
+                                <div class="poem-author">—扁鹊（战国）</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 导航按钮 -->
+                        <button class="poem-btn" id="prevBtn">上一首</button>
+                        <button class="poem-btn" id="nextBtn">下一首</button>
+                        
+                        <!-- 指示点 -->
+                        <div class="poem-dots">
+                            <div class="poem-dot active" data-index="0"></div>
+                            <div class="poem-dot" data-index="1"></div>
+                            <div class="poem-dot" data-index="2"></div>
+                            <div class="poem-dot" data-index="3"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 歌赋解释说明 -->
+                    <div class="explanation" id="poemExplanation">
+                        <h3>《标幽赋》解析</h3>
+                        <p>
+                            《标幽赋》为金元时期针灸名家窦汉卿所著，是针灸学的经典理论著作。该赋全面阐述了针灸的基本理论、
+                            刺灸方法、腧穴配伍及临床应用等内容，强调"气至病所"的重要性，提出"轻滑慢而未来，沉涩紧而已至"
+                            的候气方法，对后世针灸学的发展产生了深远影响。
+                        </p>
+                    </div>
+                </section>
+                
+                <footer>
+                    <p>数据来源：针灸聚英</p>
+                    <p>针行千年 |<a href="数据新闻大赛网页.html#针灸歌赋">返回主站</a></p>
+                </footer>
+            </div>
+
+            <script>
+                // 定义配色方案
+                const DARK_BLUE = "#001524";
+                const TEAL = "#15616d";
+                const CREAM = "#ffecd1";
+                const ORANGE = "#ff7d00";
+                const DARK_BROWN = "#78290f";
+                
+                // 歌赋解析数据
+                const poemExplanations = [
+                    {
+                        title: "《标幽赋》解析",
+                        content: "《标幽赋》为金元时期著名针灸医家 窦默 所著。 窦氏在《标幽赋》中论述了针灸与经络、脏腑、气血的关系，施术前后的注意事项以及取穴、配穴和针灸禁忌等重要问题。 《标幽赋》采用歌赋的形式把幽冥隐晦、深奥难懂的针灸理论表达出来，文字精炼，叙述准确，对后世医家影响很大。"
+                    },
+                    {
+                        title: "《通玄指要赋》解析",
+                        content: "《通玄指要赋》为窦汉卿所撰，是针灸歌赋中的精华。该赋详细论述了针灸配穴原则和手法技巧，以临床实践为基础，强调辨证取穴的重要性，对后世针灸临床应用具有重要指导意义。"
+                    },
+                    {
+                        title: "《百症赋》解析",
+                        content: "《百症赋》按头面五官、颈项、躯干、四肢，全身自上而下的顺序编写。 治疗上述各症，共用156个穴，大多偏重于特定穴，如五输穴、俞、募、郄、络穴等，特别体现了近端、远端配合取穴治疗的方法。"
+                    },
+                    {
+                        title: "《玉龙歌》解析",
+                        content: "《玉龙歌》是托名战国名医扁鹊所作的针灸歌赋，实际由元代王国瑞编入《扁鹊神应针灸玉龙经》（1329年刊行）,全篇以七言韵文形式系统阐述针灸理论，涉及80余种病症的辨证施治方案。"
+                    }
+                ];
+
+                // 歌赋滑块功能
+                function initPoemSlider() {
+                    const track = document.getElementById('poemTrack');
+                    const prevBtn = document.getElementById('prevBtn');
+                    const nextBtn = document.getElementById('nextBtn');
+                    const dots = document.querySelectorAll('.poem-dot');
+                    const explanationContainer = document.getElementById('poemExplanation');
+                    const poems = document.querySelectorAll('.poem-container');
+                    
+                    let currentIndex = 0;
+                    const poemCount = poems.length;
+                    
+                    // 更新滑块位置和指示点
+                    function updateSlider() {
+                        const offset = -currentIndex * 100;
+                        track.style.transform = `translateX(${offset}%)`;
+                        
+                        // 更新指示点
+                        dots.forEach((dot, index) => {
+                            if (index === currentIndex) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                        
+                        // 更新解释内容
+                        if (poemExplanations[currentIndex]) {
+                            explanationContainer.innerHTML = `
+                                <h3>${poemExplanations[currentIndex].title}</h3>
+                                <p>${poemExplanations[currentIndex].content}</p>
+                            `;
+                        }
+                    }
+                    
+                    // 下一首
+                    nextBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % poemCount;
+                        updateSlider();
+                    });
+                    
+                    // 上一首
+                    prevBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + poemCount) % poemCount;
+                        updateSlider();
+                    });
+                    
+                    // 点击指示点
+                    dots.forEach(dot => {
+                        dot.addEventListener('click', () => {
+                            const index = parseInt(dot.getAttribute('data-index'));
+                            currentIndex = index;
+                            updateSlider();
+                        });
+                    });
+                    
+                    // 添加自动轮播
+                    let autoplayInterval = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % poemCount;
+                        updateSlider();
+                    }, 5000);
+                    
+                    // 鼠标悬停时暂停自动轮播
+                    const sliderContainer = document.querySelector('.poem-slider');
+                    sliderContainer.addEventListener('mouseenter', () => {
+                        clearInterval(autoplayInterval);
+                    });
+                    
+                    // 鼠标离开时恢复自动轮播
+                    sliderContainer.addEventListener('mouseleave', () => {
+                        autoplayInterval = setInterval(() => {
+                            currentIndex = (currentIndex + 1) % poemCount;
+                            updateSlider();
+                        }, 5000);
+                    });
+                }
+
+                // 页面加载完成后初始化滑块
+                document.addEventListener("DOMContentLoaded", function() {
+                    initPoemSlider();
+                });
+            </script>
+        </body>
+        </html>
+    

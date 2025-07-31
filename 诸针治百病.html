@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诸针治百病</title>
+    <style>
+        :root {
+            --deep-blue: #001524;
+            --teal-gray: #15616d;
+            --cream: #ffecd1;
+            --orange: #ff7d00;
+            --brown: #78290f;
+        }
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--cream);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 30px 0 20px 0;
+            border-bottom: 1.5px solid var(--teal-gray);
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: var(--orange);
+            font-size: 2.5rem;
+            letter-spacing: 0.15em;
+            margin-bottom: 12px;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px var(--brown);
+        }
+        h2 {
+            color: var(--orange);
+            font-size: 1.7rem;
+            margin: 35px 0 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--teal-gray);
+            letter-spacing: 0.08em;
+        }
+        .text-description {
+            max-width: 1170px;
+            margin: 0 auto 35px;
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: var(--cream);
+            text-align:justify;
+        }
+		 .description {
+            max-width: 1170px;
+            margin: 0 auto 35px;
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: var(--cream);
+            text-align:center;
+        }
+        .visualization-section {
+            background-color: rgba(21, 97, 109, 0.10);
+            border-radius: 12px;
+            padding: 28px 20px 36px 20px;
+            margin-bottom: 45px;
+            border-left: 5px solid var(--orange);
+            overflow: hidden;
+        }
+        .image-container {
+            width: 90%;
+            height: 600px;
+            margin: 30px auto 0 auto;
+            background-color: var(--deep-blue);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 24px 0 rgba(0, 21, 36, 0.15);
+            padding: 20px;
+        }
+        .chart-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        footer {
+            text-align: center;
+            padding: 22px;
+            margin-top: 60px;
+            border-top: 1.5px solid var(--teal-gray);
+            font-size: 1rem;
+            color: rgba(255, 236, 209, 0.7);
+        }
+        a {
+            color: var(--orange);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 900px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.2rem; }
+            .description { font-size: 1rem; }
+            .image-container { 
+                height: 400px; 
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>诸针治百病</h1>
+            <p class="description">
+                汇聚多种针法，展示三大常见针灸疗法及其治疗疾病、对应穴位的数据图，助您了解不同技术在临床中的应用与成效。
+            </p>
+        </header>
+        <!-- 电针疗法 -->
+        <section class="visualization-section">
+            <h2>电针疗法</h2>
+			<p class="text-description" align="center">
+                电针疗法是通过电针器输出微量低频脉冲电流，结合传统毫针刺入穴位进行疾病治疗的中医疗法。该方法主要应用于面瘫、癫痫、神经痛等13类神经系统疾病及骨关节病症的治疗，治疗时需要根据患者体质调节通电时长与电流强度，单次治疗时间控制在15-30分钟。操作规范中明确心脏起搏器使用者、孕妇等特殊人群属于治疗禁忌对象，并要求严格控制脊柱部位电流强度以避免医疗风险。
+            </p>
+            <div class="image-container">
+                <img src="images/电针疗法.jpg" alt="电针疗法数据图" class="chart-image">
+            </div>
+        </section>
+        <!-- 灸法 -->
+        <section class="visualization-section">
+            <h2>灸法</h2>
+			<p class="text-description" align="center">
+                灸法古称“灸焫”，又称艾灸。指以艾绒为主要材料，点燃后直接或间接熏灼体表穴位的一种治疗方法。也可在艾绒中掺入少量辛温香燥的药末，以加强治疗作用。该法有温经通络，升阳举陷，行气活血，祛寒逐湿，消肿散结，回阳救逆等作用，并可用于保健。对慢性虚弱性疾病和风、寒、湿邪为患的疾病尤为适宜。因其制成的形式及运用方法的不同，又可分为艾条灸、艾炷灸、温针灸和温灸器灸等数种。
+            </p>
+            <div class="image-container">
+                <img src="images/灸法.jpg" alt="灸法数据图" class="chart-image">
+            </div>
+        </section>
+        <!-- 刺络放血法 -->
+        <section class="visualization-section">
+            <h2>刺络放血法</h2>
+			<p class="text-description" align="center">
+                又称放血疗法，是以中医经络学说和气血理论为基础的传统外治方法，最早记载于《黄帝内经》，扁鹊、华佗等古代医家曾用于治疗中风、疮痈等疾病。该疗法通过三棱针、梅花针等工具刺破特定穴位或浅表血络，放出适量血液以达到退热、止痛、解毒等十大功效。操作方法包含缓刺、速刺、挑刺等五种手法，适应症涵盖带状疱疹、高血压、急性腰扭伤等30余种病症。2021年临床数据显示，其对痤疮、关节痛的疗效尤为显著。
+            </p>
+            <div class="image-container">
+                <img src="images/刺络放血.jpg" alt="刺络放血法数据图" class="chart-image">
+            </div>
+        </section>
+        <footer>
+             <p>数据来源：中国针灸标准网 </p>
+             <p>针行千年 | <a href="数据新闻大赛网页.html#acupuncture-techniques">返回主站</a></p>
+        </footer>
+    </div>
+</body>
+</html>

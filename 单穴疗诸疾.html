@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单穴疗诸疾</title>
+    <style>
+        :root {
+            --deep-blue: #001524;
+            --teal-gray: #15616d;
+            --cream: #ffecd1;
+            --orange: #ff7d00;
+            --brown: #78290f;
+        }
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--cream);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        header {
+            text-align: center;
+            padding: 50px 0 40px 0;
+            border-bottom: 2px solid var(--teal-gray);
+            margin-bottom: 60px;
+            position: relative;
+        }
+        h1 {
+            color: var(--orange);
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            letter-spacing: 0.15em;
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px var(--brown);
+        }
+        h2, h3, h4 {
+            color: var(--orange);
+        }
+        h2 {
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
+            margin: 50px 0 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--teal-gray);
+            letter-spacing: 0.08em;
+        }
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 1.8rem);
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+        h4 {
+            font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+            margin-bottom: 15px;
+            color: var(--cream);
+            border-bottom: 1px solid rgba(255, 236, 209, 0.3);
+            padding-bottom: 8px;
+        }
+        .text-description {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            line-height: 2.1;
+            color: var(--cream);
+            text-align: justify;
+            padding: 0 30px;
+        }
+        .description {
+            max-width: 1100px;
+            margin: 0 auto 45px;
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            line-height: 2.1;
+            color: var(--cream);
+            text-align: center;
+            padding: 0 30px;
+        }
+        .visualization-section {
+            background-color: rgba(21, 97, 109, 0.15);
+            border-radius: 18px;
+            padding: 40px 35px;
+            margin-bottom: 70px;
+            border-left: 8px solid var(--orange);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .visualization-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 21, 36, 0.3);
+        }
+        
+        /* 图片容器优化 */
+        .image-container {
+            width: 100%;
+            margin: 35px auto;
+            background-color: var(--deep-blue);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 35px 0 rgba(0, 21, 36, 0.25);
+            padding: 30px;
+            box-sizing: border-box;
+            min-height: 300px; /* 最小高度确保容器稳定性 */
+        }
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 900px; /* 限制最大宽度 */
+            text-align: center;
+        }
+        .chart-image {
+            width: 100%;
+            height: auto;
+            max-height: 500px; /* 控制最大高度 */
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            display: block; /* 确保图片作为块级元素显示 */
+            margin: 0 auto; /* 居中显示 */
+        }
+        .chart-image:hover {
+            transform: scale(1.02);
+        }
+
+        .acupoint-card {
+            background-color: rgba(21, 97, 109, 0.15);
+            border-radius: 15px;
+            padding: 40px 35px;
+            margin: 60px auto;
+            max-width: 1100px;
+            border-top: 8px solid var(--orange);
+        }
+        .acupoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .acupoint-item {
+            background-color: rgba(0, 21, 36, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 4px solid var(--orange);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .acupoint-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 80px;
+            border-top: 3px solid var(--teal-gray);
+            font-size: 1.2rem;
+            color: rgba(255, 236, 209, 0.8);
+        }
+        a {
+            color: var(--orange);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #ff9529;
+        }
+        
+        /* 响应式图片优化 */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 35px;
+            }
+            .chart-image {
+                max-height: 450px;
+            }
+        }
+        @media (max-width: 992px) {
+            .acupoint-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chart-image {
+                max-height: 400px;
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            header {
+                padding: 40px 0 30px 0;
+                margin-bottom: 50px;
+            }
+            .chart-image {
+                max-height: 350px;
+            }
+            .acupoint-grid {
+                grid-template-columns: 1fr;
+            }
+            .visualization-section {
+                padding: 30px 20px;
+            }
+            .acupoint-card {
+                padding: 30px 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            header {
+                padding: 30px 0 20px 0;
+                margin-bottom: 40px;
+            }
+            .chart-image {
+                max-height: 280px;
+            }
+            .text-description, .description {
+                padding: 0 15px;
+            }
+            .image-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>单穴疗诸疾</h1>
+            <p class="description">
+                探索特定穴位与多种疾病之间的治疗关系网络，了解中医"一穴多用"的治疗智慧。
+            </p>
+        </header>
+        
+        <!-- 电针疗法 -->
+        <section class="visualization-section">
+            <h2>电针疗法穴位网络关系图</h2>
+            <p class="text-description">
+                电针疗法是通过电针器输出微量低频脉冲电流，结合传统毫针刺入穴位进行疾病治疗的中医疗法。该方法主要应用于面瘫、癫痫、神经痛等13类神经系统疾病及骨关节病症的治疗，治疗时需要根据患者体质调节通电时长与电流强度，单次治疗时间控制在15-30分钟。操作规范中明确心脏起搏器使用者、孕妇等特殊人群属于治疗禁忌对象，并要求严格控制脊柱部位电流强度以避免医疗风险。
+            </p>
+            <div class="image-container">
+                <div class="chart-wrapper">
+                    <a href="电针疗法.html">
+                        <img src="images/电针疗法1.jpg" alt="电针疗法数据图" class="chart-image">
+                    </a>
+					<p>点击上方图片查看详情</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 灸法 -->
+        <section class="visualization-section">
+            <h2>灸法穴位网络关系图</h2>
+            <p class="text-description">
+                灸法古称"灸焫"，又称艾灸。指以艾绒为主要材料，点燃后直接或间接熏灼体表穴位的一种治疗方法。也可在艾绒中掺入少量辛温香燥的药末，以加强治疗作用。该法有温经通络，升阳举陷，行气活血，祛寒逐湿，消肿散结，回阳救逆等作用，并可用于保健。对慢性虚弱性疾病和风、寒、湿邪为患的疾病尤为适宜。因其制成的形式及运用方法的不同，又可分为艾条灸、艾炷灸、温针灸和温灸器灸等数种。
+            </p>
+            <div class="image-container">
+                <div class="chart-wrapper">
+                    <a href="灸法.html">
+                        <img src="images/灸法1.jpg" alt="灸法数据图" class="chart-image">
+                    </a>
+					<p>点击上方图片查看详情</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 刺络放血法 -->
+        <section class="visualization-section">
+            <h2>刺络放血法穴位网络关系图</h2>
+            <p class="text-description">
+                又称放血疗法，是以中医经络学说和气血理论为基础的传统外治方法，最早记载于《黄帝内经》，扁鹊、华佗等古代医家曾用于治疗中风、疮痈等疾病。该疗法通过三棱针、梅花针等工具刺破特定穴位或浅表血络，放出适量血液以达到退热、止痛、解毒等十大功效。操作方法包含缓刺、速刺、挑刺等五种手法，适应症涵盖带状疱疹、高血压、急性腰扭伤等30余种病症。2021年临床数据显示，其对痤疮、关节痛的疗效尤为显著。
+            </p>
+            <div class="image-container">
+                <div class="chart-wrapper">
+                    <a href="刺络放血疗法.html">
+                        <img src="images/刺络放血疗法1.jpg" alt="刺络放血法数据图" class="chart-image">
+                    </a>
+					<p>点击上方图片查看详情</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 常见穴位卡片 -->
+        <div class="acupoint-card">
+            <h3>常见特定穴及其功效</h3>
+            <div class="acupoint-grid">
+                <div class="acupoint-item">
+                    <h4>足三里</h4>
+                    <p>位于小腿外侧，是足阳明胃经的合穴，能调理脾胃、补中益气、通经活络、增强免疫力。主治胃痛、呕吐、腹胀、泄泻、便秘等消化系统疾病，以及下肢痿痹、虚劳诸证。</p>
+                </div>
+                <div class="acupoint-item">
+                    <h4>合谷</h4>
+                    <p>位于手背，是手阳明大肠经的原穴，主治头痛、目赤肿痛、牙痛、牙关紧闭等头面五官疾病。具有疏风解表、清热止痛、通经活络的功效，是治疗面口疾患的要穴。</p>
+                </div>
+                <div class="acupoint-item">
+                    <h4>内关</h4>
+                    <p>位于前臂掌侧，是手厥阴心包经的络穴，八脉交会穴之一。主治心痛、心悸、胸闷、胃痛、呕吐、失眠、癫狂等病症。具有宁心安神、和胃降逆、宽胸理气的功效。</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>数据来源：中国针灸标准网</p>
+            <p>针行千年 | <a href="数据新闻大赛网页.html#单穴疗诸疾">返回主站</a></p>
+        </footer>
+    </div>
+</body>
+</html>
+    
